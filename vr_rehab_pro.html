@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RehabX — Clinical Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Clinical Dark with Teal/Amber accent language
+   Aesthetic: Medical-grade precision. Dense information, zero clutter.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Backgrounds */
+  --bg:     #050c14;
+  --bg1:    #081018;
+  --bg2:    #0b1620;
+  --bg3:    #0f1d2b;
+  --bg4:    #142333;
+
+  /* Borders */
+  --b0: rgba(255,255,255,.04);
+  --b1: rgba(255,255,255,.08);
+  --b2: rgba(255,255,255,.14);
+  --b3: rgba(255,255,255,.22);
+
+  /* Semantic colors */
+  --teal:  #00d4aa;  --teal-d: rgba(0,212,170,.1);  --teal-m: rgba(0,212,170,.2);
+  --amber: #f0a500;  --amber-d:rgba(240,165,0,.1);   --amber-m:rgba(240,165,0,.2);
+  --rose:  #f05070;  --rose-d: rgba(240,80,112,.1);  --rose-m: rgba(240,80,112,.2);
+  --sky:   #38bdf8;  --sky-d:  rgba(56,189,248,.1);  --sky-m:  rgba(56,189,248,.2);
+  --lime:  #84cc16;  --lime-d: rgba(132,204,22,.1);  --lime-m: rgba(132,204,22,.2);
+  --vio:   #a78bfa;  --vio-d:  rgba(167,139,250,.1); --vio-m:  rgba(167,139,250,.2);
+
+  /* Text */
+  --t0: #f0f7ff;
+  --t1: #8ba8c4;
+  --t2: #4d6a85;
+  --t3: #2a3f54;
+
+  /* Sizing */
+  --r:  8px;
+  --rl: 14px;
+  --rx: 20px;
+
+  /* Sidebar */
+  --sb: 240px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  background:var(--bg);
+  color:var(--t1);
+  font-family:'Outfit',sans-serif;
+  font-size:14px;
+  line-height:1.5;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--b2); }
+
+/* ── Layout shell ──────────────────────────────────────────────────────── */
+.shell { display:flex; min-height:100vh; }
+
+/* ── Sidebar ───────────────────────────────────────────────────────────── */
+.sidebar {
+  width:var(--sb);
+  flex-shrink:0;
+  background:var(--bg1);
+  border-right:1px solid var(--b1);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0; left:0; bottom:0;
+  z-index:100;
+  overflow:hidden;
+}
+
+.sb-brand {
+  padding:22px 20px 18px;
+  border-bottom:1px solid var(--b0);
+}
+.sb-logo {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:4px;
+}
+.sb-logo-icon {
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--teal),#006a55);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+}
+.sb-logo-name {
+  font-family:'Outfit',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  color:var(--t0);
+  letter-spacing:-.3px;
+  line-height:1;
+}
+.sb-logo-name span { color:var(--teal); }
+.sb-logo-sub {
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--t2);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-top:2px;
+  padding-left:44px;
+}
+
+.sb-conn {
+  display:flex;align-items:center;gap:6px;
+  padding:6px 10px;
+  margin:12px 16px 0;
+  border-radius:var(--r);
+  background:var(--bg2);
+  border:1px solid var(--b1);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--t2);
+  cursor:pointer;
+  transition:all .2s;
+}
+.sb-conn:hover { border-color:var(--b2); color:var(--t1); }
+.sb-conn.connected { border-color:rgba(0,212,170,.25); color:var(--teal); }
+.sb-conn-dot { width:6px;height:6px;border-radius:50%;background:var(--t3);flex-shrink:0; }
+.sb-conn.connected .sb-conn-dot { background:var(--teal);animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+.sb-nav {
+  flex:1;
+  padding:16px 12px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.sb-section-label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--t3);
+  padding:10px 8px 6px;
+  margin-top:4px;
+}
+.sb-section-label:first-child { margin-top:0; }
+
+.nav-item {
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;
+  border-radius:var(--r);
+  cursor:pointer;
+  transition:all .15s;
+  color:var(--t2);
+  font-size:13px;
+  font-weight:500;
+  border:1px solid transparent;
+  user-select:none;
+}
+.nav-item:hover { background:var(--bg3); color:var(--t1); }
+.nav-item.active {
+  background:var(--teal-d);
+  border-color:rgba(0,212,170,.2);
+  color:var(--teal);
+}
+.nav-item .ni-icon { font-size:15px; width:20px; text-align:center; flex-shrink:0; }
+.nav-item .ni-badge {
+  margin-left:auto;
+  background:var(--teal-d);
+  border:1px solid rgba(0,212,170,.2);
+  color:var(--teal);
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  padding:1px 6px;
+  border-radius:20px;
+  min-width:18px;
+  text-align:center;
+}
+
+.sb-footer {
+  padding:14px 16px;
+  border-top:1px solid var(--b0);
+}
+.sb-ver {
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:var(--t3);
+  letter-spacing:.5px;
+}
+
+/* ── Main content ──────────────────────────────────────────────────────── */
+.main {
+  margin-left:var(--sb);
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+.topbar {
+  height:56px;
+  background:var(--bg1);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;
+  padding:0 28px;
+  gap:16px;
+  position:sticky;top:0;z-index:50;
+  flex-shrink:0;
+}
+.topbar-title {
+  font-family:'Outfit',sans-serif;
+  font-size:15px;
+  font-weight:600;
+  color:var(--t0);
+  letter-spacing:-.2px;
+}
+.topbar-crumb {
+  font-size:12px;
+  color:var(--t2);
+  margin-left:2px;
+}
+.topbar-right {
+  margin-left:auto;
+  display:flex;align-items:center;gap:10px;
+}
+.tb-time {
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--t2);
+}
+
+.content {
+  flex:1;
+  padding:24px 28px 40px;
+  overflow-y:auto;
+}
+
+/* ── Pages ─────────────────────────────────────────────────────────────── */
+.page { display:none; animation:fadein .2s ease; }
+.page.active { display:block; }
+@keyframes fadein { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Cards ─────────────────────────────────────────────────────────────── */
+.card {
+  background:var(--bg2);
+  border:1px solid var(--b1);
+  border-radius:var(--rl);
+  padding:22px 24px;
+  transition:border-color .2s;
+}
+.card:hover { border-color:var(--b2); }
+.card-hdr {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.card-title {
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--t2);
+  display:flex;align-items:center;gap:8px;
+}
+.card-title::before {
+  content:'';
+  display:inline-block;
+  width:3px;height:12px;
+  border-radius:2px;
+  background:var(--teal);
+}
+
+/* ── Stats row ─────────────────────────────────────────────────────────── */
+.stats-row {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px;
+  margin-bottom:24px;
+}
+.stat-card {
+  background:var(--bg2);
+  border:1px solid var(--b1);
+  border-radius:var(--rl);
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color .2s,transform .15s;
+}
+.stat-card:hover { border-color:var(--b2); transform:translateY(-1px); }
+.stat-card::after {
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent,var(--teal));
+  opacity:.6;
+}
+.stat-label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t2);margin-bottom:8px;
+}
+.stat-val {
+  font-family:'Outfit',sans-serif;
+  font-size:28px;font-weight:700;
+  color:var(--t0);line-height:1;
+  margin-bottom:4px;
+}
+.stat-sub { font-size:11px;color:var(--t2); }
+
+/* ── Grid layouts ──────────────────────────────────────────────────────── */
+.grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+.grid-3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px; }
+.grid-12 { display:grid;grid-template-columns:1fr 2fr;gap:20px; }
+.grid-21 { display:grid;grid-template-columns:2fr 1fr;gap:20px; }
+@media(max-width:1000px){.grid-2,.grid-12,.grid-21{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.grid-3{grid-template-columns:1fr}}
+
+/* ── Form elements ─────────────────────────────────────────────────────── */
+.form-row { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+.form-row-3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px; }
+@media(max-width:700px){.form-row,.form-row-3{grid-template-columns:1fr}}
+.fg { margin-bottom:14px; }
+.fg:last-child { margin-bottom:0; }
+
+label, .lbl {
+  display:block;
+  font-size:10px;font-weight:600;
+  color:var(--t2);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+input[type=text],input[type=email],input[type=url],input[type=password],input[type=number],
+select,textarea {
+  width:100%;
+  background:var(--bg3);
+  border:1px solid var(--b2);
+  border-radius:var(--r);
+  padding:10px 13px;
+  color:var(--t0);
+  font-family:'Outfit',sans-serif;
+  font-size:13px;
+  outline:none;
+  -webkit-appearance:none;appearance:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+input:focus,select:focus,textarea:focus {
+  border-color:var(--teal);
+  box-shadow:0 0 0 3px rgba(0,212,170,.1);
+}
+input::placeholder,textarea::placeholder { color:var(--t3); }
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%234d6a85' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  padding-right:36px;cursor:pointer;
+}
+select option { background:var(--bg3); }
+textarea { resize:vertical;min-height:80px; }
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.btn {
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 18px;
+  border-radius:var(--r);
+  border:1px solid transparent;
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+  user-select:none;
+}
+.btn-primary {
+  background:var(--teal);color:#001a14;
+  border-color:var(--teal);
+}
+.btn-primary:hover { background:#00f0c3;box-shadow:0 0 20px rgba(0,212,170,.3); }
+.btn-secondary {
+  background:var(--bg3);color:var(--t1);border-color:var(--b2);
+}
+.btn-secondary:hover { border-color:var(--b3);color:var(--t0); }
+.btn-danger {
+  background:var(--rose-d);color:var(--rose);border-color:var(--rose-m);
+}
+.btn-danger:hover { background:var(--rose-m);box-shadow:0 0 16px var(--rose-d); }
+.btn-amber {
+  background:var(--amber-d);color:var(--amber);border-color:var(--amber-m);
+}
+.btn-amber:hover { background:var(--amber-m); }
+.btn-ghost {
+  background:transparent;color:var(--t2);border-color:var(--b1);
+}
+.btn-ghost:hover { color:var(--t1);border-color:var(--b2); }
+.btn-sm { padding:6px 12px;font-size:11px;border-radius:6px; }
+.btn-lg { padding:13px 28px;font-size:15px;font-weight:700;border-radius:var(--rl); }
+.btn:disabled { opacity:.35;cursor:not-allowed;pointer-events:none; }
+.btn .spin {
+  width:13px;height:13px;border:2px solid currentColor;border-top-color:transparent;
+  border-radius:50%;animation:ro .7s linear infinite;display:inline-block;
+}
+@keyframes ro { to{transform:rotate(360deg)} }
+
+/* ── Badges ────────────────────────────────────────────────────────────── */
+.badge {
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:20px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+  white-space:nowrap;border:1px solid transparent;
+}
+.badge-teal  { background:var(--teal-d); color:var(--teal); border-color:var(--teal-m); }
+.badge-amber { background:var(--amber-d);color:var(--amber);border-color:var(--amber-m); }
+.badge-rose  { background:var(--rose-d); color:var(--rose); border-color:var(--rose-m); }
+.badge-sky   { background:var(--sky-d);  color:var(--sky);  border-color:var(--sky-m); }
+.badge-lime  { background:var(--lime-d); color:var(--lime); border-color:var(--lime-m); }
+.badge-vio   { background:var(--vio-d);  color:var(--vio);  border-color:var(--vio-m); }
+.badge-dim   { background:var(--bg3);    color:var(--t2);   border-color:var(--b1); }
+
+/* ── Tables ────────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x:auto;border-radius:var(--r);border:1px solid var(--b1); }
+table { width:100%;border-collapse:collapse;font-size:13px; }
+thead th {
+  background:var(--bg3);
+  padding:10px 14px;
+  text-align:left;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t2);font-weight:400;
+  border-bottom:1px solid var(--b1);
+  white-space:nowrap;
+}
+tbody tr { border-bottom:1px solid var(--b0);transition:background .12s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--bg3); }
+tbody td { padding:10px 14px;color:var(--t1);vertical-align:middle; }
+.td-actions { display:flex;gap:6px;align-items:center; }
+
+/* ── Toggle button groups ─────────────────────────────────────────────── */
+.btn-group { display:flex;gap:6px;flex-wrap:wrap; }
+.btn-toggle {
+  flex:1;min-width:50px;
+  padding:8px 12px;
+  border:1px solid var(--b1);border-radius:var(--r);
+  background:var(--bg3);color:var(--t2);
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;text-align:center;user-select:none;
+}
+.btn-toggle:hover { border-color:var(--b2);color:var(--t1); }
+.btn-toggle.sel-teal  { background:var(--teal-d); border-color:rgba(0,212,170,.35);color:var(--teal); }
+.btn-toggle.sel-amber { background:var(--amber-d);border-color:rgba(240,165,0,.35); color:var(--amber); }
+.btn-toggle.sel-vio   { background:var(--vio-d);  border-color:rgba(167,139,250,.35);color:var(--vio); }
+.btn-toggle-col { display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px; }
+.btn-toggle-col .btc-num { font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:500;line-height:1; }
+.btn-toggle-col .btc-lbl { font-size:9px;letter-spacing:1px;text-transform:uppercase;opacity:.7; }
+
+/* ── Range sliders ─────────────────────────────────────────────────────── */
+.range-row { display:flex;align-items:center;gap:12px; }
+.range-row input[type=range] {
+  flex:1;-webkit-appearance:none;appearance:none;
+  height:4px;background:var(--bg4);border-radius:2px;
+  border:none;padding:0;cursor:pointer;outline:none;
+}
+.range-row input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--teal);border:2px solid var(--bg);cursor:pointer;
+  box-shadow:0 0 6px rgba(0,212,170,.4);
+}
+.range-val {
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--teal);min-width:48px;text-align:right;
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position:fixed;inset:0;z-index:500;
+  background:rgba(5,12,20,.85);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-overlay.open { opacity:1;pointer-events:all; }
+.modal {
+  background:var(--bg2);
+  border:1px solid var(--b2);
+  border-radius:var(--rx);
+  width:100%;max-width:600px;
+  max-height:90vh;overflow-y:auto;
+  transform:scale(.96) translateY(8px);transition:transform .2s;
+  padding:28px;
+}
+.modal-overlay.open .modal { transform:scale(1) translateY(0); }
+.modal-hdr {
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:22px;gap:12px;
+}
+.modal-title {
+  font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;
+  color:var(--t0);letter-spacing:-.3px;
+  line-height:1.2;
+}
+.modal-sub { font-size:12px;color:var(--t2);margin-top:4px; }
+.modal-close {
+  width:30px;height:30px;border-radius:var(--r);
+  background:var(--bg3);border:1px solid var(--b1);
+  color:var(--t2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;
+}
+.modal-close:hover { color:var(--t0);border-color:var(--b2); }
+.modal-footer {
+  display:flex;gap:10px;justify-content:flex-end;
+  margin-top:24px;padding-top:20px;border-top:1px solid var(--b1);
+}
+
+/* ── Mode switcher (Preset / Custom) ──────────────────────────────────── */
+.mode-tabs {
+  display:flex;border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;
+  margin-bottom:16px;
+}
+.mode-tab {
+  flex:1;padding:10px 14px;border:none;
+  background:var(--bg3);color:var(--t2);
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .18s;
+  border-right:1px solid var(--b1);
+}
+.mode-tab:last-child { border-right:none; }
+.mode-tab:hover { color:var(--t1); }
+.mode-tab.active-teal { background:var(--teal-d);color:var(--teal); }
+.mode-tab.active-vio  { background:var(--vio-d); color:var(--vio); }
+
+/* ── Param groups ──────────────────────────────────────────────────────── */
+.param-block {
+  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);
+  padding:14px 16px;margin-bottom:12px;
+}
+.param-block-title {
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--t2);margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.param-block-title .dot {
+  width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;
+}
+.param-block-title .dot.amber { background:var(--amber); }
+.param-block-title .dot.rose  { background:var(--rose); }
+.param-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px 16px; }
+@media(max-width:600px){.param-grid{grid-template-columns:1fr}}
+
+/* ── Experience cards ─────────────────────────────────────────────────── */
+.exp-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px; }
+.exp-card {
+  background:var(--bg2);border:1px solid var(--b1);border-radius:var(--rl);
+  padding:18px 20px;cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.exp-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--exp-color,var(--teal));transition:opacity .2s;opacity:.6;
+}
+.exp-card:hover { border-color:var(--b2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3); }
+.exp-card:hover::before { opacity:1; }
+.exp-card.selected { border-color:var(--teal);background:var(--teal-d); }
+.exp-icon { font-size:28px;margin-bottom:10px;display:block; }
+.exp-name { font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--t0);margin-bottom:4px; }
+.exp-desc { font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5; }
+.exp-tags { display:flex;flex-wrap:wrap;gap:5px; }
+.exp-tag {
+  padding:2px 7px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  background:var(--bg3);color:var(--t2);border:1px solid var(--b1);
+}
+
+/* ── Live session panel ─────────────────────────────────────────────────── */
+.live-card {
+  background:linear-gradient(135deg,rgba(0,212,170,.06),var(--bg2));
+  border:1px solid rgba(0,212,170,.2);
+  border-radius:var(--rl);padding:18px 20px;
+}
+.live-hdr { display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap; }
+.live-badge {
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,212,170,.13);border:1px solid rgba(0,212,170,.3);
+  border-radius:20px;padding:3px 10px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--teal);letter-spacing:1px;text-transform:uppercase;
+}
+.live-dot { width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pulse 1s infinite; }
+.live-meta-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:14px; }
+.lm-cell { background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:8px 10px; }
+.lm-label { font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t2);margin-bottom:3px; }
+.lm-val { font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--t0); }
+.state-pill {
+  padding:2px 8px;border-radius:20px;font-size:9px;
+  font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;
+  border:1px solid var(--b1);background:var(--bg3);color:var(--t2);transition:all .25s;
+}
+.state-pill.active  { background:rgba(0,212,170,.13);border-color:rgba(0,212,170,.35);color:var(--teal); }
+.state-pill.paused  { background:var(--amber-d);border-color:var(--amber-m);color:var(--amber); }
+.state-pill.waiting { background:var(--sky-d);border-color:var(--sky-m);color:var(--sky); }
+.state-pill.stopped { background:var(--rose-d);border-color:var(--rose-m);color:var(--rose); }
+
+.ctrl-row { display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--b1); }
+.ctrl-btn {
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 12px;border-radius:var(--r);border:1px solid var(--b1);
+  background:var(--bg3);color:var(--t2);
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+  cursor:pointer;transition:all .18s;
+}
+.ctrl-btn:hover:not(:disabled){filter:brightness(1.25);}
+.ctrl-btn:disabled{opacity:.3;cursor:not-allowed;}
+.ctrl-play  { border-color:rgba(0,212,170,.35);color:var(--teal);background:var(--teal-d); }
+.ctrl-pause { border-color:var(--amber-m);color:var(--amber);background:var(--amber-d); }
+.ctrl-stop  { border-color:var(--rose-m); color:var(--rose); background:var(--rose-d); }
+
+/* ── System log ────────────────────────────────────────────────────────── */
+.log-panel {
+  background:var(--bg1);border:1px solid var(--b1);border-radius:var(--r);
+  padding:12px 14px;min-height:100px;max-height:240px;overflow-y:auto;
+}
+.log-row { display:flex;align-items:flex-start;gap:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.02); }
+.log-row:last-child { border-bottom:none; }
+.log-time { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);white-space:nowrap;min-width:62px; }
+.log-msg  { font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t1);word-break:break-all; }
+.log-msg.ok   { color:var(--teal); }
+.log-msg.warn { color:var(--amber); }
+.log-msg.err  { color:var(--rose); }
+.log-msg.info { color:var(--sky); }
+
+/* ── Conn modal ────────────────────────────────────────────────────────── */
+#connModal .modal { max-width:480px; }
+
+/* ── Notice ────────────────────────────────────────────────────────────── */
+.notice {
+  padding:10px 14px;border-radius:var(--r);font-size:12px;
+  font-family:'JetBrains Mono',monospace;
+  display:none;margin-top:10px;
+}
+.notice.ok  { background:var(--teal-d);border:1px solid var(--teal-m);color:var(--teal);display:block; }
+.notice.err { background:var(--rose-d);border:1px solid var(--rose-m);color:var(--rose);display:block; }
+.notice.warn { background:var(--amber-d);border:1px solid var(--amber-m);color:var(--amber);display:block; }
+
+/* ── Headset chips ─────────────────────────────────────────────────────── */
+.hs-chips { display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-height:32px; }
+.hs-chip {
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:var(--r);
+  background:var(--bg3);border:1px solid var(--b1);
+  cursor:pointer;transition:all .18s;
+}
+.hs-chip:hover { border-color:var(--b2); }
+.hs-chip.selected { background:var(--teal-d);border-color:rgba(0,212,170,.35); }
+.hs-chip.in-game  { background:var(--amber-d);border-color:var(--amber-m); }
+.hs-chip-dot { width:6px;height:6px;border-radius:50%;background:var(--t3); }
+.hs-chip.selected .hs-chip-dot { background:var(--teal);animation:pulse 2s infinite; }
+.hs-chip.in-game  .hs-chip-dot { background:var(--amber);animation:pulse 1s infinite; }
+.hs-chip-name { font-size:12px;font-weight:600;color:var(--t0); }
+.hs-chip.selected .hs-chip-name { color:var(--teal); }
+.hs-chip.in-game  .hs-chip-name { color:var(--amber); }
+.hs-chip-id { font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t2); }
+
+/* ── Scan bar ──────────────────────────────────────────────────────────── */
+.scan-bar-row { display:flex;align-items:center;gap:8px;margin-top:8px; }
+.scan-bar { flex:1;height:2px;background:var(--bg4);border-radius:1px;overflow:hidden; }
+.scan-fill { height:100%;background:var(--teal);border-radius:1px;transition:width .1s linear; }
+.scan-lbl  { font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t3); }
+
+/* ── Empty state ───────────────────────────────────────────────────────── */
+.empty { text-align:center;padding:40px 20px;color:var(--t2); }
+.empty-icon { font-size:36px;margin-bottom:10px;opacity:.3; }
+.empty-msg  { font-size:13px; }
+
+/* ── Divider ───────────────────────────────────────────────────────────── */
+hr.dv { border:none;border-top:1px solid var(--b1);margin:18px 0; }
+
+/* ── Search ────────────────────────────────────────────────────────────── */
+.search-bar {
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);
+  padding:8px 12px;transition:border-color .2s;
+}
+.search-bar:focus-within { border-color:rgba(0,212,170,.3); }
+.search-bar input {
+  border:none;background:transparent;padding:0;
+  color:var(--t0);font-size:13px;outline:none;
+}
+.search-bar input::placeholder { color:var(--t3); }
+.search-icon { color:var(--t3);font-size:14px;flex-shrink:0; }
+
+/* ── Toasts ────────────────────────────────────────────────────────────── */
+#toastRoot {
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  display:flex;flex-direction:column;gap:8px;
+}
+.toast {
+  padding:11px 16px;border-radius:var(--r);
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  border:1px solid var(--b2);
+  animation:toastIn .25s ease;
+  max-width:340px;
+}
+.toast.ok   { background:rgba(5,12,20,.95);color:var(--teal);border-color:var(--teal-m); }
+.toast.err  { background:rgba(5,12,20,.95);color:var(--rose);border-color:var(--rose-m); }
+.toast.warn { background:rgba(5,12,20,.95);color:var(--amber);border-color:var(--amber-m); }
+@keyframes toastIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:none} }
+
+/* ── Responsive sidebar ────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .sidebar { width:56px; }
+  .sb-logo-name,.sb-logo-sub,.nav-item span:not(.ni-icon),.sb-conn span,
+  .sb-section-label,.ni-badge,.sb-ver { display:none; }
+  .main { margin-left:56px; }
+  .nav-item { padding:10px;justify-content:center; }
+  .content { padding:16px 14px 32px; }
+  .topbar { padding:0 16px; }
+}
+
+/* ═══ PAGE-SPECIFIC ════════════════════════════════════════════════════════ */
+
+/* Dashboard overview cards */
+.activity-row {
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--b0);
+}
+.activity-row:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:4px;}
+.act-dot.amber{background:var(--amber);}
+.act-dot.rose{background:var(--rose);}
+.act-text{font-size:12px;color:var(--t1);flex:1;}
+.act-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);white-space:nowrap;}
+
+/* Experience detail view */
+.level-chip{
+  padding:10px 14px;border-radius:var(--r);
+  background:var(--bg3);border:1px solid var(--b1);
+  cursor:pointer;transition:all .15s;
+}
+.level-chip:hover{border-color:var(--b2);}
+.level-chip.sel{background:var(--teal-d);border-color:rgba(0,212,170,.35);}
+.level-num{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--t0);line-height:1;}
+.level-lbl{font-size:10px;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ TOAST ROOT ═══════════════════════════════════ -->
+<div id="toastRoot"></div>
+
+<!-- ═══════════════════════ CONN MODAL ═══════════════════════════════════ -->
+<div class="modal-overlay" id="connModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title">Connect to Supabase</div>
+        <div class="modal-sub">Configure your database connection to get started</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('connModal')">✕</button>
+    </div>
+    <div class="fg"><label>Project URL</label><input id="sbUrl" type="url" placeholder="https://xxxx.supabase.co"/></div>
+    <div class="fg"><label>Anon / Public Key</label><input id="sbKey" type="password" placeholder="eyJhbGci…"/></div>
+    <div class="notice" id="connNote"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('connModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAndConnect()">⚡ Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DOCTOR MODAL ════════════════════════════════ -->
+<div class="modal-overlay" id="doctorModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="doctorModalTitle">Add Doctor</div>
+        <div class="modal-sub">Fill in the practitioner information</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('doctorModal')">✕</button>
+    </div>
+    <input type="hidden" id="doctorId"/>
+    <div class="form-row">
+      <div class="fg"><label>First Name</label><input id="dFirstName" type="text" placeholder="Jean"/></div>
+      <div class="fg"><label>Last Name</label><input id="dLastName" type="text" placeholder="Dupont"/></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Specialty</label><input id="dSpecialty" type="text" placeholder="Physiotherapy"/></div>
+      <div class="fg"><label>Email</label><input id="dEmail" type="email" placeholder="jean@clinic.com"/></div>
+    </div>
+    <div class="fg"><label>Department / Notes</label><textarea id="dNotes" placeholder="Neurology ward, floor 3…"></textarea></div>
+    <div class="notice" id="doctorNote"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('doctorModal')">Cancel</button>
+      <button class="btn btn-primary" id="doctorSaveBtn" onclick="saveDoctor()">💾 Save Doctor</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PATIENT MODAL ═══════════════════════════════ -->
+<div class="modal-overlay" id="patientModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="patientModalTitle">Add Patient</div>
+        <div class="modal-sub">Create a new patient record</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('patientModal')">✕</button>
+    </div>
+    <input type="hidden" id="patientId"/>
+    <div class="form-row">
+      <div class="fg"><label>First Name</label><input id="pFirstName" type="text" placeholder="Marie"/></div>
+      <div class="fg"><label>Last Name</label><input id="pLastName" type="text" placeholder="Curie"/></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Date of Birth</label><input id="pDob" type="text" placeholder="1990-06-15"/></div>
+      <div class="fg"><label>Diagnosis / Condition</label><input id="pDiagnosis" type="text" placeholder="Post-stroke hemiplegia"/></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Assigned Doctor</label>
+        <select id="pDoctor"><option value="">— Select Doctor —</option></select>
+      </div>
+      <div class="fg"><label>Phone</label><input id="pPhone" type="text" placeholder="+33 6 …"/></div>
+    </div>
+    <div class="fg"><label>Notes</label><textarea id="pNotes" placeholder="Dominant hand: right. Motivated patient…"></textarea></div>
+    <div class="notice" id="patientNote"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('patientModal')">Cancel</button>
+      <button class="btn btn-primary" id="patientSaveBtn" onclick="savePatient()">💾 Save Patient</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ EXPERIENCE MODAL ════════════════════════════ -->
+<div class="modal-overlay" id="expModal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="expModalTitle">Add Experience</div>
+        <div class="modal-sub">Define a VR rehabilitation exercise</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('expModal')">✕</button>
+    </div>
+    <input type="hidden" id="expId"/>
+    <div class="form-row">
+      <div class="fg"><label>Experience Name</label><input id="eName" type="text" placeholder="Fruit Slicer"/></div>
+      <div class="fg"><label>Icon (emoji)</label><input id="eIcon" type="text" placeholder="🍉"/></div>
+    </div>
+    <div class="fg"><label>Description</label><textarea id="eDesc" placeholder="Upper limb dexterity training using VR fruit slicing mechanics…" style="min-height:60px"></textarea></div>
+    <div class="form-row">
+      <div class="fg"><label>Package / APK ID</label><input id="ePackage" type="text" placeholder="com.neurocare.fruitslice"/></div>
+      <div class="fg"><label>Category Tag</label><input id="eCategory" type="text" placeholder="Upper Limb, Dexterity"/></div>
+    </div>
+    <hr class="dv"/>
+    <div class="lbl" style="margin-bottom:10px">Interaction Options</div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Hand Selection</label>
+        <select id="eHandMode">
+          <option value="none">No hand selection</option>
+          <option value="single" selected>Left / Right / Both</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Finger Selection</label>
+        <select id="eFingerMode">
+          <option value="none">No finger selection</option>
+          <option value="all" selected>All fingers</option>
+        </select>
+      </div>
+    </div>
+    <hr class="dv"/>
+    <div class="card-title" style="margin-bottom:12px">Predefined Levels (JSON)</div>
+    <div class="notice warn" style="display:block;margin-bottom:10px">Define level presets as a JSON array. Leave empty to skip.</div>
+    <textarea id="eLevels" style="min-height:120px;font-family:'JetBrains Mono',monospace;font-size:11px" placeholder='[{"level":1,"label":"Easy","targetScore":10,"totalTime":300,"spawnDelay":1.25,"fallTimeout":8,"upwardForce":2.5,"depthForce":1,"bombChance":0,"bonusChance":10},{"level":2,"label":"Medium","targetScore":20,"totalTime":300,"spawnDelay":1,"fallTimeout":7,"upwardForce":3,"depthForce":1.5,"bombChance":10,"bonusChance":25}]'></textarea>
+    <div class="notice" id="expNote"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('expModal')">Cancel</button>
+      <button class="btn btn-primary" id="expSaveBtn" onclick="saveExperience()">💾 Save Experience</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SHELL ════════════════════════════════════════ -->
+<div class="shell">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">🧠</div>
+      <div class="sb-logo-name">Rehab<span>X</span></div>
+    </div>
+    <div class="sb-logo-sub">VR Clinical Platform</div>
+    <div class="sb-conn" id="sbConn" onclick="openModal('connModal')">
+      <div class="sb-conn-dot"></div>
+      <span id="sbConnTxt">Not connected</span>
+    </div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-section-label">Overview</div>
+    <div class="nav-item active" onclick="nav('dashboard')" id="nav-dashboard">
+      <span class="ni-icon">📊</span><span>Dashboard</span>
+    </div>
+
+    <div class="sb-section-label">Management</div>
+    <div class="nav-item" onclick="nav('doctors')" id="nav-doctors">
+      <span class="ni-icon">👨‍⚕️</span><span>Doctors</span>
+      <span class="ni-badge" id="badge-doctors">0</span>
+    </div>
+    <div class="nav-item" onclick="nav('patients')" id="nav-patients">
+      <span class="ni-icon">🧑‍🦽</span><span>Patients</span>
+      <span class="ni-badge" id="badge-patients">0</span>
+    </div>
+    <div class="nav-item" onclick="nav('experiences')" id="nav-experiences">
+      <span class="ni-icon">🎮</span><span>Experiences</span>
+      <span class="ni-badge" id="badge-experiences">0</span>
+    </div>
+
+    <div class="sb-section-label">Clinical</div>
+    <div class="nav-item" onclick="nav('sessions')" id="nav-sessions">
+      <span class="ni-icon">▶️</span><span>Launch Session</span>
+    </div>
+    <div class="nav-item" onclick="nav('history')" id="nav-history">
+      <span class="ni-icon">📋</span><span>Session History</span>
+    </div>
+    <div class="nav-item" onclick="nav('active')" id="nav-active">
+      <span class="ni-icon">📡</span><span>Active Sessions</span>
+      <span class="ni-badge" id="badge-active" style="background:rgba(240,165,0,.15);border-color:rgba(240,165,0,.3);color:var(--amber)">0</span>
+    </div>
+
+    <div class="sb-section-label">System</div>
+    <div class="nav-item" onclick="nav('log')" id="nav-log">
+      <span class="ni-icon">🖥️</span><span>System Log</span>
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-ver">v2.0.0 — RehabX</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      <span class="topbar-crumb" id="topbarCrumb"></span>
+    </div>
+    <div class="topbar-right">
+      <span class="tb-time" id="clockEl"></span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ════ PAGE: DASHBOARD ════════════════════════════════════════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-row">
+        <div class="stat-card" style="--accent:var(--teal)">
+          <div class="stat-label">Total Doctors</div>
+          <div class="stat-val" id="statDoctors">—</div>
+          <div class="stat-sub">Active practitioners</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--sky)">
+          <div class="stat-label">Total Patients</div>
+          <div class="stat-val" id="statPatients">—</div>
+          <div class="stat-sub">Registered</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--amber)">
+          <div class="stat-label">Active Sessions</div>
+          <div class="stat-val" id="statActive">—</div>
+          <div class="stat-sub">In progress now</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--lime)">
+          <div class="stat-label">Sessions Today</div>
+          <div class="stat-val" id="statToday">—</div>
+          <div class="stat-sub">Completed + active</div>
+        </div>
+        <div class="stat-card" style="--accent:var(--vio)">
+          <div class="stat-label">Experiences</div>
+          <div class="stat-val" id="statExp">—</div>
+          <div class="stat-sub">VR exercises available</div>
+        </div>
+      </div>
+
+      <div class="grid-21" style="gap:20px">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Recent Sessions</div><button class="btn btn-ghost btn-sm" onclick="nav('history')">View all →</button></div>
+          <div id="dashRecentSess"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No sessions yet</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Activity Feed</div></div>
+          <div id="dashActivity"><div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">Connect to Supabase</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: DOCTORS ══════════════════════════════════════════════ -->
+    <div class="page" id="page-doctors">
+      <div class="card-hdr" style="margin-bottom:20px">
+        <div class="search-bar" style="flex:1;max-width:320px">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search doctors…" id="doctorSearch" oninput="filterDoctors()"/>
+        </div>
+        <button class="btn btn-primary" onclick="openDoctorModal()">+ Add Doctor</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Specialty</th><th>Email</th><th>Patients</th><th>Sessions</th><th>Actions</th></tr></thead>
+            <tbody id="doctorsBody"><tr><td colspan="6"><div class="empty"><div class="empty-icon">👨‍⚕️</div><div class="empty-msg">No doctors yet</div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: PATIENTS ═════════════════════════════════════════════ -->
+    <div class="page" id="page-patients">
+      <div class="card-hdr" style="margin-bottom:20px">
+        <div class="search-bar" style="flex:1;max-width:320px">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search patients…" id="patientSearch" oninput="filterPatients()"/>
+        </div>
+        <button class="btn btn-primary" onclick="openPatientModal()">+ Add Patient</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Diagnosis</th><th>Doctor</th><th>DOB</th><th>Total Sessions</th><th>Actions</th></tr></thead>
+            <tbody id="patientsBody"><tr><td colspan="6"><div class="empty"><div class="empty-icon">🧑‍🦽</div><div class="empty-msg">No patients yet</div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: EXPERIENCES ══════════════════════════════════════════ -->
+    <div class="page" id="page-experiences">
+      <div class="card-hdr" style="margin-bottom:20px">
+        <div></div>
+        <button class="btn btn-primary" onclick="openExpModal()">+ Add Experience</button>
+      </div>
+      <div class="exp-grid" id="expGrid">
+        <div class="empty" style="grid-column:1/-1"><div class="empty-icon">🎮</div><div class="empty-msg">No experiences yet</div></div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: LAUNCH SESSION ═══════════════════════════════════════ -->
+    <div class="page" id="page-sessions">
+      <div class="grid-12" style="align-items:start">
+
+        <!-- LEFT: Config form -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Step 1: Doctor & Patient -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">① Assign Practitioner</div>
+            <div class="form-row">
+              <div class="fg">
+                <label>Doctor</label>
+                <select id="sessDoctor" onchange="onSessChange()"><option value="">— Select Doctor —</option></select>
+              </div>
+              <div class="fg">
+                <label>Patient</label>
+                <select id="sessPatient" onchange="onSessChange()"><option value="">— Select Patient —</option></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Experience -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">② Choose Experience</div>
+            <div class="exp-grid" id="sessExpGrid" style="gap:10px"></div>
+          </div>
+
+          <!-- Step 3: Level config (rendered dynamically) -->
+          <div class="card" id="sessConfigCard" style="display:none">
+            <div class="card-title" style="margin-bottom:16px">③ Configure Session</div>
+            <div id="sessConfigBody"></div>
+          </div>
+
+          <!-- Step 4: Headset -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">④ Select Headset</div>
+            <div class="fg">
+              <label>Headset ID <span style="color:var(--t3);font-size:9px;text-transform:none;letter-spacing:0;margin-left:4px">— auto-detected when game launches</span></label>
+              <input id="sessHeadset" type="text" placeholder="Type or select a headset below"/>
+            </div>
+            <div class="hs-chips" id="sessHsChips"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);font-style:italic">Open the VR experience on the headset…</span></div>
+            <div class="scan-bar-row"><div class="scan-bar"><div class="scan-fill" id="sessScanFill" style="width:100%"></div></div><span class="scan-lbl" id="sessScanLbl">scanning…</span></div>
+            <div class="fg" style="margin-top:14px"><label>Session Notes <span style="color:var(--t3);font-size:9px;text-transform:none;letter-spacing:0">(optional)</span></label><input id="sessNotes" type="text" placeholder="Right side weakness, first VR session…"/></div>
+          </div>
+
+          <!-- Launch button -->
+          <button class="btn btn-primary btn-lg" id="launchBtn" disabled style="width:100%;letter-spacing:1px" onclick="launchSession()">▶ LAUNCH SESSION</button>
+        </div>
+
+        <!-- RIGHT: Active session monitor -->
+        <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:72px">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px">📡 Active Session</div>
+            <div id="activePanel">
+              <div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">No active session — launch one</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:10px">🖥️ Log</div>
+            <div class="log-panel" id="sessLogPanel"><div class="log-row"><span class="log-time">--:--:--</span><span class="log-msg">Ready.</span></div></div>
+            <div style="margin-top:8px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="clearLog()">Clear</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: SESSION HISTORY ══════════════════════════════════════ -->
+    <div class="page" id="page-history">
+      <div class="card-hdr" style="margin-bottom:20px">
+        <div class="search-bar" style="flex:1;max-width:360px">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search patient, doctor, experience…" id="histSearch" oninput="filterHistory()"/>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm" id="histRefresh" onclick="loadHistory()">↺ Refresh</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Date</th><th>Patient</th><th>Doctor</th><th>Experience</th><th>Level</th>
+              <th>Hand</th><th>Finger</th><th>Mode</th><th>Status</th><th>Score</th><th>Duration</th><th>Notes</th>
+            </tr></thead>
+            <tbody id="histBody"><tr><td colspan="12"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">Connect to Supabase to see history</div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: ACTIVE SESSIONS ══════════════════════════════════════ -->
+    <div class="page" id="page-active">
+      <div class="card-hdr" style="margin-bottom:20px">
+        <div class="card-title">Live Sessions</div>
+        <button class="btn btn-secondary btn-sm" onclick="loadActiveSessions()">↺ Refresh</button>
+      </div>
+      <div id="activeGrid" class="grid-2" style="gap:16px">
+        <div class="empty" style="grid-column:1/-1"><div class="empty-icon">📡</div><div class="empty-msg">No active sessions</div></div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE: SYSTEM LOG ═══════════════════════════════════════════ -->
+    <div class="page" id="page-log">
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">🖥️ System Log</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="clearLog(true)">Clear</button>
+          </div>
+        </div>
+        <div class="log-panel" id="fullLogPanel" style="max-height:600px;min-height:300px"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+'use strict';
+var DB={sb:null,rch:null,doctors:[],patients:[],experiences:[],history:[],activeSessions:[],headsets:[],logRows:[]};
+var SEL={experience:null,levelMode:'preset',level:null,hand:null,finger:null,autoMode:false};
+var ACTIVE={sessionId:null,state:null,liveTimer:null,startTime:null,poller:null};
+var HS={timer:null,countdown:10,rafId:null,lastTick:0,INTERVAL:10,WINDOW:90};
+var STORE_KEY='nc_active_sess';
+var COLORS=['var(--teal)','var(--sky)','var(--amber)','var(--vio)','var(--rose)','var(--lime)'];
+
+window.addEventListener('load',function(){
+  tickClock();setInterval(tickClock,1000);
+  var url=ls('sb_url'),key=ls('sb_key');
+  if(url&&key){el('sbUrl').value=url;el('sbKey').value=key;initSB(url,key);}
+  else openModal('connModal');
+  startScanCountdown();startHsAutoRefresh();
+  el('sessHeadset')&&el('sessHeadset').addEventListener('input',function(){checkLaunch();});
+});
+
+function tickClock(){var now=new Date();if(el('clockEl'))el('clockEl').textContent=now.toLocaleDateString([],{weekday:'short',day:'numeric',month:'short'})+' · '+now.toLocaleTimeString([],{hour12:false});}
+function el(id){return document.getElementById(id);}
+function qa(s){return Array.from(document.querySelectorAll(s));}
+function ls(k){return localStorage.getItem(k)||'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'—';}
+function fmtDate(iso){if(!iso)return'—';var d=new Date(iso);return d.toLocaleDateString()+' '+d.toTimeString().slice(0,5);}
+function fmtAge(iso){var s=Math.round((Date.now()-new Date(iso).getTime())/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago';}
+function fmtDur(v){if(v===null||v===undefined)return'—';var m=Math.floor(v/60),s=Math.floor(v%60);return m+':'+(s<10?'0':'')+s;}
+function parseLevels(raw){
+  if(!raw)return[];
+  if(Array.isArray(raw))return raw;
+  if(typeof raw==='object')return[];
+  try{return JSON.parse(raw);}catch(_){return[];}
+}
+function randColor(str){var h=0;for(var i=0;i<str.length;i++)h=str.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length];}
+function statusBadge(s){var map={pending:'badge-sky',active:'badge-teal',in_progress:'badge-teal',completed:'badge-lime',paused:'badge-amber',stopped:'badge-rose',failed:'badge-rose',cancelled:'badge-rose'};return'<span class="badge '+(map[s]||'badge-dim')+'">'+esc(s)+'</span>';}
+
+function toast(msg,type){var t=document.createElement('div');t.className='toast '+(type||'ok');t.textContent=msg;el('toastRoot').appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(function(){t.remove();},300);},3500);}
+
+function log(msg,type){var t=new Date().toTimeString().slice(0,8);DB.logRows.unshift({t:t,m:msg,c:type||''});if(DB.logRows.length>100)DB.logRows.pop();renderLog();}
+function renderLog(){var html=DB.logRows.map(function(r){return'<div class="log-row"><span class="log-time">'+r.t+'</span><span class="log-msg '+r.c+'">'+esc(r.m)+'</span></div>';}).join('');if(el('sessLogPanel'))el('sessLogPanel').innerHTML=html;if(el('fullLogPanel'))el('fullLogPanel').innerHTML=html;}
+window.clearLog=function(){DB.logRows=[];renderLog();};
+
+var PAGE_TITLES={dashboard:'Dashboard',doctors:'Doctors',patients:'Patients',experiences:'Experiences',sessions:'Launch Session',history:'Session History',active:'Active Sessions',log:'System Log'};
+window.nav=function(page){
+  qa('.page').forEach(function(p){p.classList.remove('active');});
+  qa('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var pg=el('page-'+page),ni=el('nav-'+page);
+  if(pg)pg.classList.add('active');if(ni)ni.classList.add('active');
+  el('topbarTitle').textContent=PAGE_TITLES[page]||page;
+  if(page==='sessions'){populateSessDropdowns();loadHeadsets(false);}
+  if(page==='history')loadHistory();
+  if(page==='active')loadActiveSessions();
+  if(page==='dashboard')loadDashboard();
+  if(page==='doctors')renderDoctors();
+  if(page==='patients')renderPatients();
+  if(page==='experiences')renderExperiences();
+};
+
+window.openModal=function(id){el(id).classList.add('open');};
+window.closeModal=function(id){el(id).classList.remove('open');};
+document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))closeModal(e.target.id);});
+
+window.saveAndConnect=function(){
+  var url=el('sbUrl').value.trim(),key=el('sbKey').value.trim();
+  if(!url||!key){showNote('connNote','Fill in both fields.','err');return;}
+  localStorage.setItem('sb_url',url);localStorage.setItem('sb_key',key);
+  showNote('connNote','Connecting…','ok');initSB(url,key);
+};
+function initSB(url,key){
+  try{
+    DB.sb=window.supabase.createClient(url,key);
+    el('sbConn').classList.add('connected');el('sbConnTxt').textContent='Connected';
+    log('Supabase connected.','ok');closeModal('connModal');
+    subscribeRT();
+    Promise.all([loadDoctors(),loadPatients(),loadExperiences()]).then(function(){loadDashboard();loadActiveSessions();restoreActiveSession();});
+  }catch(e){el('sbConnTxt').textContent='Error';log('Connection error: '+e.message,'err');}
+}
+function showNote(id,msg,type){var n=el(id);if(!n)return;n.className='notice '+type;n.textContent=msg;setTimeout(function(){if(n)n.style.opacity='0';},4000);}
+
+function subscribeRT(){
+  if(!DB.sb)return;if(DB.rch)DB.sb.removeChannel(DB.rch);
+  DB.rch=DB.sb.channel('nc_rt')
+    .on('postgres_changes',{event:'*',schema:'public',table:'game_sessions'},function(p){
+      if(p.new&&ACTIVE.sessionId&&p.new.id===ACTIVE.sessionId)onSessUpdate(p.new);
+      loadActiveSessions();updateDashStats();
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'headsets'},function(){loadHeadsets(false);})
+    .subscribe(function(s){log('Realtime: '+s,s==='SUBSCRIBED'?'ok':'warn');});
+}
+
+/* ── DOCTORS ── */
+function loadDoctors(){if(!DB.sb)return Promise.resolve();return DB.sb.from('doctors').select('*').order('last_name').then(function(r){if(r.error){log('Doctors: '+r.error.message,'err');return;}DB.doctors=r.data||[];el('badge-doctors').textContent=DB.doctors.length;renderDoctors();refreshDoctorSelects();});}
+var _ds='';window.filterDoctors=function(){_ds=el('doctorSearch').value.toLowerCase();renderDoctors();};
+function renderDoctors(){var rows=DB.doctors.filter(function(d){return(d.first_name+' '+d.last_name+(d.specialty||'')+(d.email||'')).toLowerCase().indexOf(_ds)>-1;});var body=el('doctorsBody');if(!rows.length){body.innerHTML='<tr><td colspan="6"><div class="empty"><div class="empty-icon">👨‍⚕️</div><div class="empty-msg">No doctors found</div></div></td></tr>';return;}body.innerHTML=rows.map(function(d){var patCount=DB.patients.filter(function(p){return p.doctor_id===d.id;}).length;return'<tr><td><strong style="color:var(--t0)">'+esc(d.first_name+' '+d.last_name)+'</strong></td><td>'+esc(d.specialty||'—')+'</td><td style="font-family:\'JetBrains Mono\',monospace;font-size:11px">'+esc(d.email||'—')+'</td><td><span class="badge badge-sky">'+patCount+'</span></td><td><span class="badge badge-dim">—</span></td><td><div class="td-actions"><button class="btn btn-ghost btn-sm" onclick="editDoctor(\''+d.id+'\')">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteDoctor(\''+d.id+'\')">🗑</button></div></td></tr>';}).join('');}
+window.openDoctorModal=function(){el('doctorId').value='';el('dFirstName').value='';el('dLastName').value='';el('dSpecialty').value='';el('dEmail').value='';el('dNotes').value='';el('doctorModalTitle').textContent='Add Doctor';el('doctorNote').className='notice';openModal('doctorModal');};
+window.editDoctor=function(id){var d=DB.doctors.find(function(x){return x.id===id;});if(!d)return;el('doctorId').value=d.id;el('dFirstName').value=d.first_name||'';el('dLastName').value=d.last_name||'';el('dSpecialty').value=d.specialty||'';el('dEmail').value=d.email||'';el('dNotes').value=d.notes||'';el('doctorModalTitle').textContent='Edit Doctor';el('doctorNote').className='notice';openModal('doctorModal');};
+window.saveDoctor=function(){var id=el('doctorId').value;var payload={first_name:el('dFirstName').value.trim(),last_name:el('dLastName').value.trim(),specialty:el('dSpecialty').value.trim(),email:el('dEmail').value.trim(),notes:el('dNotes').value.trim()};if(!payload.first_name||!payload.last_name){showNote('doctorNote','Name required.','err');return;}var btn=el('doctorSaveBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';var p=id?DB.sb.from('doctors').update(payload).eq('id',id):DB.sb.from('doctors').insert([payload]);p.then(function(r){btn.disabled=false;btn.textContent='💾 Save Doctor';if(r.error){showNote('doctorNote',r.error.message,'err');return;}toast(id?'Doctor updated.':'Doctor added.','ok');closeModal('doctorModal');loadDoctors();});};
+window.deleteDoctor=function(id){if(!confirm('Delete this doctor?'))return;DB.sb.from('doctors').delete().eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Doctor deleted.','warn');loadDoctors();});};
+function refreshDoctorSelects(){var opts='<option value="">— Select Doctor —</option>'+DB.doctors.map(function(d){return'<option value="'+d.id+'">'+esc(d.first_name+' '+d.last_name)+'</option>';}).join('');if(el('pDoctor'))el('pDoctor').innerHTML=opts;if(el('sessDoctor'))el('sessDoctor').innerHTML=opts;}
+
+/* ── PATIENTS ── */
+function loadPatients(){if(!DB.sb)return Promise.resolve();return DB.sb.from('patients').select('*, doctors(first_name,last_name)').order('last_name').then(function(r){if(r.error){log('Patients: '+r.error.message,'err');return;}DB.patients=r.data||[];el('badge-patients').textContent=DB.patients.length;renderPatients();refreshPatientSelects();});}
+var _ps='';window.filterPatients=function(){_ps=el('patientSearch').value.toLowerCase();renderPatients();};
+function renderPatients(){var rows=DB.patients.filter(function(p){return(p.first_name+' '+p.last_name+(p.diagnosis||'')).toLowerCase().indexOf(_ps)>-1;});var body=el('patientsBody');if(!rows.length){body.innerHTML='<tr><td colspan="6"><div class="empty"><div class="empty-icon">🧑‍🦽</div><div class="empty-msg">No patients found</div></div></td></tr>';return;}body.innerHTML=rows.map(function(p){var dn=p.doctors?esc(p.doctors.first_name+' '+p.doctors.last_name):'—';return'<tr><td><strong style="color:var(--t0)">'+esc(p.first_name+' '+p.last_name)+'</strong></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.diagnosis||'—')+'</td><td>'+dn+'</td><td style="font-family:\'JetBrains Mono\',monospace;font-size:11px">'+esc(p.dob||'—')+'</td><td><span class="badge badge-dim">—</span></td><td><div class="td-actions"><button class="btn btn-ghost btn-sm" onclick="editPatient(\''+p.id+'\')">✏️</button><button class="btn btn-danger btn-sm" onclick="deletePatient(\''+p.id+'\')">🗑</button></div></td></tr>';}).join('');}
+window.openPatientModal=function(){el('patientId').value='';el('pFirstName').value='';el('pLastName').value='';el('pDob').value='';el('pDiagnosis').value='';el('pPhone').value='';el('pNotes').value='';el('pDoctor').value='';el('patientModalTitle').textContent='Add Patient';el('patientNote').className='notice';openModal('patientModal');};
+window.editPatient=function(id){var p=DB.patients.find(function(x){return x.id===id;});if(!p)return;el('patientId').value=p.id;el('pFirstName').value=p.first_name||'';el('pLastName').value=p.last_name||'';el('pDob').value=p.dob||'';el('pDiagnosis').value=p.diagnosis||'';el('pPhone').value=p.phone||'';el('pNotes').value=p.notes||'';el('pDoctor').value=p.doctor_id||'';el('patientModalTitle').textContent='Edit Patient';el('patientNote').className='notice';openModal('patientModal');};
+window.savePatient=function(){var id=el('patientId').value;var payload={first_name:el('pFirstName').value.trim(),last_name:el('pLastName').value.trim(),dob:el('pDob').value.trim()||null,diagnosis:el('pDiagnosis').value.trim(),phone:el('pPhone').value.trim(),notes:el('pNotes').value.trim(),doctor_id:el('pDoctor').value||null};if(!payload.first_name||!payload.last_name){showNote('patientNote','Name required.','err');return;}var btn=el('patientSaveBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';var p=id?DB.sb.from('patients').update(payload).eq('id',id):DB.sb.from('patients').insert([payload]);p.then(function(r){btn.disabled=false;btn.textContent='💾 Save Patient';if(r.error){showNote('patientNote',r.error.message,'err');return;}toast(id?'Patient updated.':'Patient added.','ok');closeModal('patientModal');loadPatients();});};
+window.deletePatient=function(id){if(!confirm('Delete this patient?'))return;DB.sb.from('patients').delete().eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Patient deleted.','warn');loadPatients();});};
+function refreshPatientSelects(){var opts='<option value="">— Select Patient —</option>'+DB.patients.map(function(p){return'<option value="'+p.id+'">'+esc(p.first_name+' '+p.last_name)+'</option>';}).join('');if(el('sessPatient'))el('sessPatient').innerHTML=opts;}
+
+/* ── EXPERIENCES ── */
+function loadExperiences(){if(!DB.sb)return Promise.resolve();return DB.sb.from('experiences').select('*').order('name').then(function(r){if(r.error){log('Exp: '+r.error.message,'err');return;}DB.experiences=r.data||[];el('badge-experiences').textContent=DB.experiences.length;renderExperiences();renderSessExpGrid();});}
+function renderExperiences(){var grid=el('expGrid');if(!DB.experiences.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🎮</div><div class="empty-msg">No experiences yet</div></div>';return;}grid.innerHTML=DB.experiences.map(function(e){var col=randColor(e.id||e.name);var levs=parseLevels(e.levels);var tags=[e.category,e.hand_mode!=='none'?'Hands':null,e.finger_mode!=='none'?'Fingers':null,levs.length+' levels'].filter(Boolean);return'<div class="exp-card" style="--exp-color:'+col+'"><span class="exp-icon">'+esc(e.icon||'🎮')+'</span><div class="exp-name">'+esc(e.name)+'</div><div class="exp-desc">'+esc(e.description||'')+'</div><div class="exp-tags">'+tags.map(function(t){return'<span class="exp-tag">'+esc(t)+'</span>';}).join('')+'</div><div style="margin-top:12px;display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="editExp(\''+e.id+'\')">✏️ Edit</button><button class="btn btn-danger btn-sm" onclick="deleteExp(\''+e.id+'\')">🗑</button></div></div>';}).join('');}
+window.openExpModal=function(){el('expId').value='';el('eName').value='';el('eIcon').value='🎮';el('eDesc').value='';el('ePackage').value='';el('eCategory').value='';el('eHandMode').value='single';el('eFingerMode').value='all';el('eLevels').value='';el('expModalTitle').textContent='Add Experience';el('expNote').className='notice';openModal('expModal');};
+window.editExp=function(id){var e=DB.experiences.find(function(x){return x.id===id;});if(!e)return;el('expId').value=e.id;el('eName').value=e.name||'';el('eIcon').value=e.icon||'🎮';el('eDesc').value=e.description||'';el('ePackage').value=e.package_id||'';el('eCategory').value=e.category||'';el('eHandMode').value=e.hand_mode||'single';el('eFingerMode').value=e.finger_mode||'all';el('eLevels').value=e.levels?JSON.stringify(parseLevels(e.levels),null,2):'';el('expModalTitle').textContent='Edit Experience';el('expNote').className='notice';openModal('expModal');};
+window.saveExperience=function(){var id=el('expId').value;var rawLevels=el('eLevels').value.trim();var lr;
+if(rawLevels){try{JSON.parse(rawLevels);lr=rawLevels;}catch(_){showNote('expNote','Invalid JSON.','err');return;}}
+else{lr='[]';}var payload={name:el('eName').value.trim(),icon:el('eIcon').value.trim()||'🎮',description:el('eDesc').value.trim(),package_id:el('ePackage').value.trim(),category:el('eCategory').value.trim(),hand_mode:el('eHandMode').value,finger_mode:el('eFingerMode').value,levels:lr};if(!payload.name){showNote('expNote','Name required.','err');return;}var btn=el('expSaveBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';var p=id?DB.sb.from('experiences').update(payload).eq('id',id):DB.sb.from('experiences').insert([payload]);p.then(function(r){btn.disabled=false;btn.textContent='💾 Save Experience';if(r.error){showNote('expNote',r.error.message,'err');return;}toast(id?'Updated.':'Added.','ok');closeModal('expModal');loadExperiences();});};
+window.deleteExp=function(id){if(!confirm('Delete?'))return;DB.sb.from('experiences').delete().eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Deleted.','warn');loadExperiences();});};
+
+/* ── SESSION LAUNCHER ── */
+function populateSessDropdowns(){refreshDoctorSelects();refreshPatientSelects();renderSessExpGrid();}
+function renderSessExpGrid(){var grid=el('sessExpGrid');if(!grid)return;if(!DB.experiences.length){grid.innerHTML='<div style="color:var(--t3);font-size:12px;font-family:\'JetBrains Mono\',monospace;padding:8px 0">No experiences — add one first.</div>';return;}grid.innerHTML=DB.experiences.map(function(e){var col=randColor(e.id||e.name);var isSel=SEL.experience&&SEL.experience.id===e.id;return'<div class="exp-card'+(isSel?' selected':'')+'" style="--exp-color:'+col+';padding:14px" onclick="selectExp(\''+e.id+'\')"><span style="font-size:22px">'+esc(e.icon||'🎮')+'</span><div class="exp-name" style="font-size:13px;margin-top:6px">'+esc(e.name)+'</div><div class="exp-desc" style="margin-bottom:0">'+esc(e.category||'')+'</div></div>';}).join('');}
+window.selectExp=function(id){SEL.experience=DB.experiences.find(function(e){return e.id===id;});SEL.level=null;SEL.hand=null;SEL.finger=null;SEL.levelMode='preset';SEL.autoMode=false;renderSessExpGrid();buildConfigPanel();checkLaunch();};
+window.onSessChange=function(){checkLaunch();};
+
+function buildConfigPanel(){
+  var card=el('sessConfigCard'),body=el('sessConfigBody');
+  if(!SEL.experience){card.style.display='none';return;}
+  card.style.display='';
+  var exp=SEL.experience,levels=[];
+  levels=parseLevels(exp.levels);
+  var hasHand=exp.hand_mode!=='none',hasFinger=exp.finger_mode!=='none';
+  var html='';
+  html+='<div class="mode-tabs"><button class="mode-tab '+(SEL.levelMode==='preset'?'active-teal':'')+'" onclick="switchSessMode(\'preset\')">🎯 Predefined Level</button><button class="mode-tab '+(SEL.levelMode==='custom'?'active-vio':'')+'" onclick="switchSessMode(\'custom\')">⚙️ Custom Config</button></div>';
+  html+='<div id="sPresetPanel" style="display:'+(SEL.levelMode==='preset'?'block':'none')+'">';
+  if(levels.length){html+='<div class="lbl" style="margin-bottom:8px">Select Level</div><div class="btn-group" style="margin-bottom:14px">';levels.forEach(function(lv){var isSel=SEL.level&&SEL.level.level===lv.level;html+='<div class="btn-toggle'+(isSel?' sel-teal':'')+' btn-toggle-col" onclick="pickLevel('+lv.level+')"><span class="btc-num">'+lv.level+'</span><span class="btc-lbl">'+esc(lv.label||'L'+lv.level)+'</span></div>';});html+='</div>';}else{html+='<div style="color:var(--t3);font-size:12px;font-family:\'JetBrains Mono\',monospace;padding:6px 0 14px">No predefined levels — use Custom Config.</div>';}
+  html+='<div class="lbl" style="margin-bottom:8px">Mode</div><div class="btn-group" style="margin-bottom:0"><div class="btn-toggle'+(SEL.autoMode===false?' sel-teal':'')+'" onclick="pickAutoMode(false)">🎯 Manual</div><div class="btn-toggle'+(SEL.autoMode===true?' sel-amber':'')+'" onclick="pickAutoMode(true)">🚀 Auto (L1→L4)</div></div>';
+  html+='</div>';
+  html+='<div id="sCustomPanel" style="display:'+(SEL.levelMode==='custom'?'block':'none')+'">';
+  html+=buildCustomParamsHTML();
+  html+='</div>';
+  if(hasHand||hasFinger){
+    html+='<hr class="dv"/>';
+    if(hasHand){html+='<div class="fg"><div class="lbl" style="margin-bottom:8px">Hand</div><div class="btn-group">'+['left','right','both'].map(function(h){var icons={left:'🫲',right:'🫱',both:'🙌'};return'<div class="btn-toggle'+(SEL.hand===h?' sel-amber':'')+'" onclick="pickHand(\''+h+'\')">'+icons[h]+' '+cap(h)+'</div>';}).join('')+'</div></div>';}
+    if(hasFinger){html+='<div class="fg"><div class="lbl" style="margin-bottom:8px">Finger</div><div class="btn-group">'+[['thumb','👍'],['index','☝️'],['middle','🖕'],['ring','💍'],['pinky','🤙']].map(function(f){return'<div class="btn-toggle'+(SEL.finger===f[0]?' sel-teal':'')+' btn-toggle-col" onclick="pickFinger(\''+f[0]+'\')"><span style="font-size:16px">'+f[1]+'</span><span style="font-size:9px;letter-spacing:1px;text-transform:uppercase">'+cap(f[0])+'</span></div>';}).join('')+'</div></div>';}
+  }
+  body.innerHTML=html;initRangeListeners();
+}
+
+function buildCustomParamsHTML(){return'<div class="param-block"><div class="param-block-title"><span class="dot"></span>Progression</div><div class="param-grid">'+rangeField('cTargetScore','Target Score','5','100','15','1','')+rangeField('cTimer','Session Timer (s)','30','600','300','10','s')+'</div></div><div class="param-block"><div class="param-block-title"><span class="dot amber"></span>Spawner Tuning</div><div class="param-grid">'+rangeField('cSpawnDelay','Spawn Delay','0.2','5','1.25','0.05','s')+rangeField('cFallTimeout','Fall Timeout','2','20','8','0.5','s')+rangeField('cUpwardForce','Upward Force','0.5','10','2.5','0.1','')+rangeField('cDepthForce','Depth Force','0.1','5','1','0.1','')+'</div></div><div class="param-block"><div class="param-block-title"><span class="dot rose"></span>Special Fruit Chances</div><div class="param-grid">'+rangeField('cBombChance','Bomb %','0','100','10','1','%')+rangeField('cBonusChance','Bonus %','0','100','25','1','%')+'</div></div>';}
+function rangeField(id,label,min,max,val,step,unit){return'<div class="fg"><label>'+label+'</label><div class="range-row"><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+val+'" step="'+step+'" oninput="syncRange(\''+id+'\',\''+unit+'\')"/><span class="range-val" id="'+id+'V">'+val+unit+'</span></div></div>';}
+window.syncRange=function(id,unit){var inp=el(id),lbl=el(id+'V');if(inp&&lbl)lbl.textContent=inp.value+(unit||'');};
+function initRangeListeners(){['cTargetScore:','cTimer:s','cSpawnDelay:s','cFallTimeout:s','cUpwardForce:','cDepthForce:','cBombChance:%','cBonusChance:%'].forEach(function(pair){var parts=pair.split(':'),id=parts[0],unit=parts[1]||'';syncRange(id,unit);});}
+
+window.switchSessMode=function(mode){SEL.levelMode=mode;if(el('sPresetPanel'))el('sPresetPanel').style.display=mode==='preset'?'block':'none';if(el('sCustomPanel'))el('sCustomPanel').style.display=mode==='custom'?'block':'none';qa('.mode-tab').forEach(function(t,i){t.classList.remove('active-teal','active-vio');if(i===0&&mode==='preset')t.classList.add('active-teal');if(i===1&&mode==='custom')t.classList.add('active-vio');});if(mode==='custom'){SEL.level={level:0};}else{SEL.level=null;}checkLaunch();};
+window.pickLevel=function(lvNum){var exp=SEL.experience;if(!exp)return;var levels=[];levels=parseLevels(exp.levels);SEL.level=levels.find(function(l){return l.level===lvNum;})||{level:lvNum};buildConfigPanel();checkLaunch();};
+window.pickAutoMode=function(val){SEL.autoMode=val;buildConfigPanel();checkLaunch();};
+window.pickHand=function(h){SEL.hand=h;buildConfigPanel();checkLaunch();};
+window.pickFinger=function(f){SEL.finger=f;buildConfigPanel();checkLaunch();};
+function getCustomCfg(){function v(id){var e=el(id);return e?parseFloat(e.value)||0:0;}function vi(id){var e=el(id);return e?parseInt(e.value)||0:0;}return{custom_target_score:vi('cTargetScore'),custom_timer:v('cTimer'),custom_spawn_delay:v('cSpawnDelay'),custom_fall_timeout:v('cFallTimeout'),custom_upward_force:v('cUpwardForce'),custom_depth_force:v('cDepthForce'),custom_bomb_chance:vi('cBombChance'),custom_bonus_chance:vi('cBonusChance')};}
+function checkLaunch(){var exp=SEL.experience;var hasHand=exp&&exp.hand_mode!=='none';var hasFinger=exp&&exp.finger_mode!=='none';var handOk=!hasHand||SEL.hand;var fingerOk=!hasFinger||SEL.finger;var levelOk=SEL.levelMode==='custom'||(SEL.level&&SEL.level.level>0);var ok=DB.sb&&el('sessDoctor')&&el('sessDoctor').value&&el('sessPatient')&&el('sessPatient').value&&exp&&levelOk&&handOk&&fingerOk&&el('sessHeadset')&&el('sessHeadset').value.trim()&&!ACTIVE.sessionId;if(el('launchBtn'))el('launchBtn').disabled=!ok;}
+
+window.launchSession=function(){
+  if(!DB.sb)return;
+  var exp=SEL.experience,doctorId=el('sessDoctor').value,patientId=el('sessPatient').value,headset=el('sessHeadset').value.trim(),notes=el('sessNotes').value.trim();
+  var patient=DB.patients.find(function(p){return p.id===patientId;});
+  var patientName=patient?patient.first_name+' '+patient.last_name:'Unknown';
+  var doctor=DB.doctors.find(function(d){return d.id===doctorId;});
+  var doctorName=doctor?doctor.first_name+' '+doctor.last_name:'Unknown';
+  var payload={patient_name:patientName,patient_id:patientId||null,doctor_id:doctorId||null,doctor_name:doctorName,experience_id:exp.id,experience_name:exp.name,headset_id:headset,hand:SEL.hand||null,finger:SEL.finger||null,auto_mode:SEL.autoMode===true,status:'pending',notes:notes||null};
+  if(SEL.levelMode==='custom'){payload.level=0;Object.assign(payload,getCustomCfg());}else{payload.level=SEL.level?SEL.level.level:1;}
+  var btn=el('launchBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span> LAUNCHING…';
+  DB.sb.from('game_sessions').insert([payload]).select().single().then(function(r){
+    if(r.error){log('Launch failed: '+r.error.message,'err');toast(r.error.message,'err');btn.disabled=false;btn.innerHTML='▶ LAUNCH SESSION';return;}
+    ACTIVE.sessionId=r.data.id;localStorage.setItem(STORE_KEY,r.data.id);
+    log('✅ Launched ['+r.data.id.slice(0,8)+'…] → '+patientName+' | '+exp.name,'ok');
+    toast('Session launched!','ok');btn.innerHTML='⏳ WAITING FOR HEADSET…';
+    showActivePanel(r.data);setLiveSessState('waiting');startActivePoller();loadHistory();
+  });
+};
+
+function showActivePanel(row){var isC=row.level===0;el('activePanel').innerHTML='<div class="live-card"><div class="live-hdr"><div class="live-badge"><span class="live-dot"></span>LIVE</div><strong style="color:var(--t0)">'+esc(row.patient_name||'')+'</strong><span class="state-pill waiting" id="livePill">WAITING</span><span id="liveTimer" style="margin-left:auto;font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--teal)"></span></div><div class="live-meta-grid">'+lmCell('Experience',esc(row.experience_name||'—'))+lmCell('Level',isC?'<span style="color:var(--vio)">Custom</span>':'L'+row.level)+lmCell('Hand',cap(row.hand))+lmCell('Finger',cap(row.finger))+lmCell('Mode',row.auto_mode?'🚀 Auto':'🎯 Manual')+lmCell('Status',row.status)+'</div><div class="ctrl-row"><button class="ctrl-btn ctrl-play" id="btnPlay" onclick="resumeSess()" style="display:none">▶ Resume</button><button class="ctrl-btn ctrl-pause" id="btnPause" onclick="pauseSess()">⏸ Pause</button><button class="ctrl-btn ctrl-stop" id="btnStop" onclick="stopSess()">⏹ Stop</button></div></div>';}
+function lmCell(label,val){return'<div class="lm-cell"><div class="lm-label">'+label+'</div><div class="lm-val">'+val+'</div></div>';}
+function hideActivePanel(){el('activePanel').innerHTML='<div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">No active session</div></div>';}
+function setLiveSessState(state){ACTIVE.state=state;var pill=el('livePill');if(!pill)return;pill.className='state-pill '+state;pill.textContent=state.toUpperCase();if(state==='active'){if(el('btnPlay'))el('btnPlay').style.display='none';if(el('btnPause'))el('btnPause').style.display='';startLiveTimer();}else if(state==='paused'){if(el('btnPlay'))el('btnPlay').style.display='';if(el('btnPause'))el('btnPause').style.display='none';stopLiveTimer();}else{if(el('btnPlay'))el('btnPlay').style.display='none';if(el('btnPause'))el('btnPause').style.display='none';}}
+
+window.pauseSess=function(){if(!DB.sb||!ACTIVE.sessionId)return;DB.sb.from('game_sessions').update({status:'paused'}).eq('id',ACTIVE.sessionId).then(function(r){if(r.error){toast(r.error.message,'err');return;}log('⏸ Paused.','warn');setLiveSessState('paused');});};
+window.resumeSess=function(){if(!DB.sb||!ACTIVE.sessionId)return;DB.sb.from('game_sessions').update({status:'active'}).eq('id',ACTIVE.sessionId).then(function(r){if(r.error){toast(r.error.message,'err');return;}log('▶ Resumed.','ok');setLiveSessState('active');});};
+window.stopSess=function(){if(!DB.sb||!ACTIVE.sessionId)return;if(!confirm('Stop this session?'))return;var idToStop=ACTIVE.sessionId;clearActive();hideActivePanel();DB.sb.from('game_sessions').update({status:'stopped'}).eq('id',idToStop).then(function(r){if(r.error){toast(r.error.message,'err');return;}log('⏹ Stopped.','warn');toast('Session stopped.','warn');loadHistory();loadActiveSessions();});};
+function onSessUpdate(row){if(row.id!==ACTIVE.sessionId)return;if(row.status==='active'&&ACTIVE.state!=='active'){log('▶ Game started on headset.','ok');setLiveSessState('active');}if(row.status==='paused'&&ACTIVE.state!=='paused'){log('⏸ Headset paused.','warn');setLiveSessState('paused');}if(row.status==='completed'){log('✅ Completed! Score: '+row.score+' | '+fmtDur(row.duration_seconds),'ok');toast('Session completed! Score: '+row.score,'ok');clearActive();hideActivePanel();loadHistory();}if(row.status==='stopped'||row.status==='failed'){log('Session '+row.status+'.','warn');clearActive();hideActivePanel();}}
+function clearActive(){stopLiveTimer();stopActivePoller();localStorage.removeItem(STORE_KEY);ACTIVE.sessionId=null;ACTIVE.state=null;ACTIVE.startTime=null;var btn=el('launchBtn');if(btn){btn.disabled=false;btn.innerHTML='▶ LAUNCH SESSION';}checkLaunch();}
+function startActivePoller(){if(ACTIVE.poller)return;ACTIVE.poller=setInterval(function(){if(!ACTIVE.sessionId||!DB.sb){stopActivePoller();return;}DB.sb.from('game_sessions').select('*').eq('id',ACTIVE.sessionId).single().then(function(r){if(r.data)onSessUpdate(r.data);});},3000);}
+function stopActivePoller(){if(ACTIVE.poller)clearInterval(ACTIVE.poller);ACTIVE.poller=null;}
+function restoreActiveSession(){var id=localStorage.getItem(STORE_KEY);if(!id||!DB.sb)return;DB.sb.from('game_sessions').select('*').eq('id',id).single().then(function(r){if(r.error||!r.data){localStorage.removeItem(STORE_KEY);return;}var row=r.data;if(['pending','active','paused'].indexOf(row.status)===-1){localStorage.removeItem(STORE_KEY);return;}ACTIVE.sessionId=id;nav('sessions');showActivePanel(row);setLiveSessState(row.status==='paused'?'paused':row.status==='active'?'active':'waiting');startActivePoller();log('Session restored: '+row.patient_name+' ('+row.status+')','ok');});}
+function startLiveTimer(){if(ACTIVE.liveTimer)return;ACTIVE.startTime=ACTIVE.startTime||Date.now();ACTIVE.liveTimer=setInterval(function(){var e2=el('liveTimer');if(!e2)return;var e=Math.floor((Date.now()-ACTIVE.startTime)/1000);var m=Math.floor(e/60),s=e%60;e2.textContent=m+':'+(s<10?'0':'')+s;},1000);}
+function stopLiveTimer(){if(ACTIVE.liveTimer)clearInterval(ACTIVE.liveTimer);ACTIVE.liveTimer=null;}
+
+/* ── HEADSETS ── */
+function loadHeadsets(manual){if(!DB.sb)return;var since=new Date(Date.now()-HS.WINDOW*1000).toISOString();DB.sb.from('headsets').select('headset_id,name,model,status,last_seen').gte('last_seen',since).order('last_seen',{ascending:false}).then(function(r){if(r.error)return;DB.headsets=r.data||[];renderHsChips();});}
+function renderHsChips(){var container=el('sessHsChips');if(!container)return;var cur=el('sessHeadset')?el('sessHeadset').value.trim():'';if(!DB.headsets.length){container.innerHTML='<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--t3);font-style:italic">No headsets online</span>';return;}container.innerHTML='';DB.headsets.forEach(function(h){var isMe=cur===h.headset_id,ig=h.status==='in_game';var chip=document.createElement('div');chip.className='hs-chip'+(isMe?' selected':'')+(ig&&!isMe?' in-game':'');chip.title='ID: '+h.headset_id+'\nLast seen: '+fmtAge(h.last_seen);chip.innerHTML='<div class="hs-chip-dot"></div><div><div class="hs-chip-name">'+esc(h.model||h.name||'Headset')+'</div><div class="hs-chip-id">'+esc(h.headset_id.slice(0,12)+'…')+'</div></div><div class="badge '+(ig?'badge-amber':'badge-teal')+'" style="margin-left:auto">'+(ig?'IN-GAME':'ONLINE')+'</div>';chip.addEventListener('click',function(){if(ig){toast('Already in a session.','warn');return;}el('sessHeadset').value=h.headset_id;renderHsChips();checkLaunch();log('Headset: '+(h.model||h.headset_id),'info');});container.appendChild(chip);});}
+function startScanCountdown(){HS.countdown=HS.INTERVAL;HS.lastTick=performance.now();if(HS.rafId)cancelAnimationFrame(HS.rafId);(function tick(now){var dt=(now-HS.lastTick)/1000;HS.lastTick=now;HS.countdown=Math.max(0,HS.countdown-dt);var fill=el('sessScanFill'),lbl=el('sessScanLbl');if(fill)fill.style.width=((HS.countdown/HS.INTERVAL)*100)+'%';if(lbl)lbl.textContent=Math.ceil(HS.countdown)+'s';if(HS.countdown>0)HS.rafId=requestAnimationFrame(tick);})(performance.now());}
+function startHsAutoRefresh(){if(HS.timer)clearInterval(HS.timer);HS.timer=setInterval(function(){loadHeadsets(false);startScanCountdown();},HS.INTERVAL*1000);}
+
+/* ── HISTORY ── */
+var _allHist=[],_histSearch='';
+function loadHistory(){if(!DB.sb)return;DB.sb.from('game_sessions').select('*').order('created_at',{ascending:false}).limit(200).then(function(r){if(r.error){log('History: '+r.error.message,'err');return;}_allHist=r.data||[];filterHistory();});}
+// ✅ FIXED
+window.filterHistory=function(){_histSearch=(el('histSearch')?el('histSearch').value:'').toLowerCase();var rows=_allHist.filter(function(r){return(r.patient_name+(r.experience_name||'')+(r.headset_id||'')).toLowerCase().indexOf(_histSearch)>-1;});renderHistory(rows);};
+function renderHistory(rows){var body=el('histBody');if(!rows.length){body.innerHTML='<tr><td colspan="12"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No sessions found</div></div></td></tr>';return;}body.innerHTML=rows.map(function(r){var isC=r.level===0;return'<tr><td style="font-family:\'JetBrains Mono\',monospace;font-size:10px;white-space:nowrap">'+fmtDate(r.created_at)+'</td><td><strong style="color:var(--t0)">'+esc(r.patient_name||'—')+'</strong></td><td style="color:var(--t2);font-size:12px">'+esc(r.doctor_name||r.doctor_id||'—')+'</td><td style="font-weight:600;color:var(--t0)">'+esc(r.experience_name||'—')+'</td><td>'+(isC?'<span class="badge badge-vio">Custom</span>':'<span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal)">L'+r.level+'</span>')+'</td><td>'+cap(r.hand)+'</td><td>'+cap(r.finger)+'</td><td>'+(r.auto_mode?'<span style="color:var(--amber)">Auto</span>':'Manual')+'</td><td>'+statusBadge(r.status)+'</td><td style="font-family:\'JetBrains Mono\',monospace;font-weight:600;color:var(--t0)">'+(r.score!==null?r.score:'—')+'</td><td style="font-family:\'JetBrains Mono\',monospace">'+fmtDur(r.duration_seconds)+'</td><td style="color:var(--t2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.notes||'—')+'</td></tr>';}).join('');}
+window.exportCSV=function(){if(!_allHist.length){toast('No data.','warn');return;}var cols=['created_at','patient_name','doctor_name','experience_name','level','hand','finger','auto_mode','status','score','duration_seconds','notes','headset_id'];var lines=[cols.join(',')].concat(_allHist.map(function(r){return cols.map(function(c){return JSON.stringify(r[c]!==null&&r[c]!==undefined?r[c]:'');}).join(',');}));var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download='neurocare_'+Date.now()+'.csv';a.click();toast('Exported '+_allHist.length+' rows.','ok');};
+
+/* ── ACTIVE SESSIONS PAGE ── */
+function loadActiveSessions(){if(!DB.sb)return;DB.sb.from('game_sessions').select('*').in('status',['pending','active','paused']).order('created_at',{ascending:false}).then(function(r){if(r.error)return;DB.activeSessions=r.data||[];el('badge-active').textContent=DB.activeSessions.length;el('statActive').textContent=DB.activeSessions.length;renderActiveSessions();});}
+function renderActiveSessions(){var grid=el('activeGrid');if(!DB.activeSessions.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📡</div><div class="empty-msg">No active sessions right now</div></div>';return;}grid.innerHTML=DB.activeSessions.map(function(s){var isC=s.level===0;return'<div class="live-card"><div class="live-hdr"><div class="live-badge"><span class="live-dot"></span>'+esc(s.status.toUpperCase())+'</div><strong style="color:var(--t0)">'+esc(s.patient_name||'—')+'</strong><span class="state-pill '+s.status+'">'+s.status.toUpperCase()+'</span></div><div class="live-meta-grid">'+lmCell('Experience',esc(s.experience_name||'—'))+lmCell('Level',isC?'<span style="color:var(--vio)">Custom</span>':'L'+s.level)+lmCell('Headset',esc((s.headset_id||'').slice(0,10)+'…'))+lmCell('Doctor',esc(s.doctor_name||'—'))+'</div><div class="ctrl-row">'+(s.status!=='active'?'<button class="ctrl-btn ctrl-play" onclick="remoteCmd(\''+s.id+'\',\'active\')">▶ Resume</button>':'')+(s.status!=='paused'?'<button class="ctrl-btn ctrl-pause" onclick="remoteCmd(\''+s.id+'\',\'paused\')">⏸ Pause</button>':'')+'<button class="ctrl-btn ctrl-stop" onclick="remoteStop(\''+s.id+'\')">⏹ Stop</button></div></div>';}).join('');}
+window.remoteCmd=function(id,status){if(!DB.sb)return;DB.sb.from('game_sessions').update({status:status}).eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Sent: '+status,'ok');loadActiveSessions();});};
+window.remoteStop=function(id){if(!confirm('Stop this session?'))return;remoteCmd(id,'stopped');};
+
+/* ── DASHBOARD ── */
+function loadDashboard(){updateDashStats();if(!DB.sb)return;var today=new Date();today.setHours(0,0,0,0);DB.sb.from('game_sessions').select('id',{count:'exact'}).gte('created_at',today.toISOString()).then(function(r){el('statToday').textContent=(r.count||0);});DB.sb.from('game_sessions').select('*').order('created_at',{ascending:false}).limit(8).then(function(r){if(r.error||!r.data)return;el('dashActivity').innerHTML=r.data.map(function(s){return'<div class="activity-row"><div class="act-dot'+(s.status==='completed'?'':s.status==='failed'||s.status==='stopped'?' rose':' amber')+'"></div><div class="act-text"><strong>'+esc(s.patient_name||'—')+'</strong> — '+esc(s.experience_name||'—')+' '+statusBadge(s.status)+'</div><div class="act-time">'+fmtAge(s.created_at)+'</div></div>';}).join('')||'<div class="empty"><div class="empty-msg">No activity yet</div></div>';el('dashRecentSess').innerHTML='<div class="table-wrap"><table><thead><tr><th>Patient</th><th>Experience</th><th>Status</th><th>Score</th><th>Duration</th></tr></thead><tbody>'+r.data.map(function(s){return'<tr><td style="font-weight:600;color:var(--t0)">'+esc(s.patient_name||'—')+'</td><td>'+esc(s.experience_name||'—')+'</td><td>'+statusBadge(s.status)+'</td><td style="font-family:\'JetBrains Mono\',monospace">'+(s.score!==null?s.score:'—')+'</td><td style="font-family:\'JetBrains Mono\',monospace">'+fmtDur(s.duration_seconds)+'</td></tr>';}).join('')+'</tbody></table></div>';});}
+function updateDashStats(){if(el('statDoctors'))el('statDoctors').textContent=DB.doctors.length||'—';if(el('statPatients'))el('statPatients').textContent=DB.patients.length||'—';if(el('statActive'))el('statActive').textContent=DB.activeSessions.length||'0';if(el('statExp'))el('statExp').textContent=DB.experiences.length||'—';}
+
+log('NeuroCare VR Dashboard v2.0 ready.','ok');
+log('Required new tables: doctors, patients, experiences. Run the SQL schema in Supabase.','info');
+</script>
