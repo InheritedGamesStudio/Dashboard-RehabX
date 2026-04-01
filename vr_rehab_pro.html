@@ -194,6 +194,7 @@ tbody td{padding:10px 14px;color:var(--t1);vertical-align:middle;}
 .hs-chip:hover{border-color:var(--b2);}
 .hs-chip.selected{background:var(--teal-d);border-color:rgba(0,212,170,.35);}
 .hs-chip.in-game{background:var(--amber-d);border-color:var(--amber-m);}
+.hs-chip.dimmed{opacity:.35;pointer-events:none;}
 .hs-chip-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
 .hs-chip.selected .hs-chip-dot{background:var(--teal);animation:pulse 2s infinite;}
 .hs-chip.in-game .hs-chip-dot{background:var(--amber);animation:pulse 1s infinite;}
@@ -234,8 +235,6 @@ hr.dv{border:none;border-top:1px solid var(--b1);margin:18px 0;}
 .act-dot.amber{background:var(--amber);}.act-dot.rose{background:var(--rose);}
 .act-text{font-size:12px;color:var(--t1);flex:1;}
 .act-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);white-space:nowrap;}
-
-/* ── Schema / KPI tags ── */
 .schema-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--bg4);color:var(--t2);border:1px solid var(--b1);margin:2px;}
 .schema-tag.type-range{border-color:rgba(0,212,170,.2);color:var(--teal);}
 .schema-tag.type-int{border-color:rgba(56,189,248,.2);color:var(--sky);}
@@ -245,8 +244,6 @@ hr.dv{border:none;border-top:1px solid var(--b1);margin:18px 0;}
 .schema-tag.type-angle{border-color:rgba(240,165,0,.2);color:var(--amber);}
 .schema-tag.type-duration{border-color:rgba(56,189,248,.2);color:var(--sky);}
 .schema-tag.type-text{border-color:rgba(255,255,255,.1);color:var(--t2);}
-
-/* ── KPI display in sessions / history ── */
 .kpi-strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
 .kpi-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--b1);}
 .kpi-pill-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t2);}
@@ -260,8 +257,6 @@ hr.dv{border:none;border-top:1px solid var(--b1);margin:18px 0;}
 .kpi-pill.kpi-angle .kpi-pill-val{color:var(--amber);}
 .kpi-pill.kpi-duration{border-color:var(--vio-m);}
 .kpi-pill.kpi-duration .kpi-pill-val{color:var(--vio);}
-
-/* ── Schema builder (experience modal) ── */
 .schema-builder{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:14px;}
 .schema-row{display:grid;grid-template-columns:1fr 100px 80px 80px 80px 32px;gap:6px;align-items:end;margin-bottom:8px;}
 .schema-row:last-child{margin-bottom:0;}
@@ -270,25 +265,77 @@ hr.dv{border:none;border-top:1px solid var(--b1);margin:18px 0;}
 .schema-del-btn:hover{background:var(--rose-m);}
 input.schema-input{padding:7px 9px;font-size:12px;}
 select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
-
-/* ── KPI builder (experience modal) ── */
 .kpi-builder{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:14px;}
 .kpi-builder-row{display:grid;grid-template-columns:1fr 120px 70px 80px 32px;gap:6px;align-items:end;margin-bottom:8px;}
 .kpi-builder-row:last-child{margin-bottom:0;}
 .kpi-builder-hdr{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);display:grid;grid-template-columns:1fr 120px 70px 80px 32px;gap:6px;margin-bottom:6px;}
 @media(max-width:650px){.schema-row,.schema-row-hdr,.kpi-builder-row,.kpi-builder-hdr{grid-template-columns:1fr 80px 60px 60px 28px}}
-
-/* ── Info boxes on exp card ── */
 .schema-info{margin-top:10px;padding:8px 10px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);}
 .schema-info-title{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:5px;}
-
-/* ── Dynamic param panel ── */
 .dyn-param-section{margin-bottom:14px;}
 .dyn-param-section-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 .dyn-param-section-title::before{content:'';width:3px;height:10px;border-radius:2px;background:var(--vio);display:inline-block;}
-
-/* ── Interaction mode banners ── */
 .interaction-note{padding:8px 12px;border-radius:var(--r);font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg4);border:1px solid var(--b1);color:var(--t3);margin-bottom:12px;}
+
+/* ── Headsets page ── */
+.headset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+.headset-card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--rl);padding:18px 20px;transition:border-color .2s,transform .15s;position:relative;overflow:hidden;}
+.headset-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--hs-accent,var(--t3));opacity:.7;}
+.headset-card.status-online::before{background:var(--teal);}
+.headset-card.status-in_game::before{background:var(--amber);}
+.headset-card.status-offline::before{background:var(--t3);}
+.headset-card:hover{border-color:var(--b2);transform:translateY(-1px);}
+.hs-card-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.hs-card-icon{width:40px;height:40px;border-radius:10px;background:var(--bg3);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.hs-card-info{flex:1;min-width:0;}
+.hs-card-name{font-size:14px;font-weight:700;color:var(--t0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hs-card-model{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t2);margin-top:2px;}
+.hs-card-status{display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--b1);background:var(--bg3);color:var(--t2);flex-shrink:0;}
+.hs-card-status.online{background:var(--teal-d);border-color:var(--teal-m);color:var(--teal);}
+.hs-card-status.in_game{background:var(--amber-d);border-color:var(--amber-m);color:var(--amber);}
+.hs-status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.hs-card-status.online .hs-status-dot{animation:pulse 2s infinite;}
+.hs-card-status.in_game .hs-status-dot{animation:pulse 1s infinite;}
+.hs-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.hs-meta-cell{background:var(--bg3);border:1px solid var(--b0);border-radius:var(--r);padding:8px 10px;}
+.hs-meta-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:3px;}
+.hs-meta-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t1);word-break:break-all;}
+.hs-card-actions{display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--b0);}
+.hs-rename-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.hs-rename-row input{flex:1;padding:7px 10px;font-size:12px;}
+.hs-rename-row .btn{padding:7px 12px;font-size:11px;}
+.hs-exp-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:var(--r);background:var(--vio-d);border:1px solid var(--vio-m);color:var(--vio);font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:6px;}
+
+/* ── Session headset filter notice ── */
+.hs-filter-notice{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r);background:var(--vio-d);border:1px solid var(--vio-m);color:var(--vio);font-family:'JetBrains Mono',monospace;font-size:10px;margin-bottom:10px;}
+.hs-filter-notice-dot{width:5px;height:5px;border-radius:50%;background:var(--vio);flex-shrink:0;}
+
+/* ── Multi-session panel (right sidebar of Launch page) ── */
+.multi-sess-panel{display:flex;flex-direction:column;gap:10px;max-height:560px;overflow-y:auto;padding-right:2px;}
+.multi-sess-card{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rl);padding:14px 16px;position:relative;overflow:hidden;transition:border-color .2s;}
+.multi-sess-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.multi-sess-card.ms-pending::before{background:var(--sky);}
+.multi-sess-card.ms-active::before{background:var(--teal);}
+.multi-sess-card.ms-paused::before{background:var(--amber);}
+.multi-sess-card:hover{border-color:var(--b2);}
+.ms-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.ms-patient{font-size:13px;font-weight:700;color:var(--t0);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ms-exp{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t2);padding:2px 7px;border-radius:4px;background:var(--bg4);border:1px solid var(--b1);white-space:nowrap;flex-shrink:0;}
+.ms-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.ms-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--bg4);border:1px solid var(--b1);color:var(--t2);}
+.ms-pill.ms-level{border-color:var(--teal-m);color:var(--teal);}
+.ms-pill.ms-hand{border-color:var(--amber-m);color:var(--amber);}
+.ms-pill.ms-headset{border-color:var(--sky-m);color:var(--sky);}
+.ms-ctrl{display:flex;gap:6px;}
+.ms-ctrl-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 8px;border-radius:var(--r);border:1px solid var(--b1);background:var(--bg4);color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;cursor:pointer;transition:all .18s;}
+.ms-ctrl-btn:hover{filter:brightness(1.3);}
+.ms-ctrl-play{border-color:rgba(0,212,170,.3);color:var(--teal);background:var(--teal-d);}
+.ms-ctrl-pause{border-color:var(--amber-m);color:var(--amber);background:var(--amber-d);}
+.ms-ctrl-stop{border-color:var(--rose-m);color:var(--rose);background:var(--rose-d);}
+.ms-timer{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);margin-left:auto;flex-shrink:0;}
+.ms-kpi-row{margin-top:8px;padding-top:8px;border-top:1px solid var(--b0);}
+.sess-count-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:20px;background:var(--amber-d);border:1px solid var(--amber-m);color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;}
+.sess-count-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite;}
 </style>
 </head>
 <body>
@@ -347,8 +394,6 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
       <div class="fg"><label>Category Tag</label><input id="eCategory" type="text" placeholder="Upper Limb, Dexterity"/></div>
     </div>
     <hr class="dv"/>
-
-    <!-- Interaction options -->
     <div class="lbl" style="margin-bottom:10px">Interaction Options</div>
     <div class="form-row">
       <div class="fg"><label>Hand Selection</label>
@@ -366,8 +411,6 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
     </div>
     <div id="handFingerNote" class="interaction-note">🙌 Clinician will choose hand and finger before launching each session.</div>
     <hr class="dv"/>
-
-    <!-- Param schema builder -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div class="card-title">⚙️ Custom Parameter Schema</div>
       <button class="btn btn-ghost btn-sm" onclick="addSchemaRow()">+ Add Param</button>
@@ -383,13 +426,11 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
       <button class="btn btn-ghost btn-sm" onclick="clearSchemaRows()">🗑 Clear</button>
     </div>
     <hr class="dv"/>
-
-    <!-- KPI schema builder -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div class="card-title">📊 KPI Schema</div>
       <button class="btn btn-ghost btn-sm" onclick="addKpiRow()">+ Add KPI</button>
     </div>
-    <div class="notice warn" style="display:block;margin-bottom:10px;font-size:11px">Define the metrics this game reports back after each session. Unity pushes this automatically. The dashboard will display these values in session history.</div>
+    <div class="notice warn" style="display:block;margin-bottom:10px;font-size:11px">Define the metrics this game reports back after each session.</div>
     <div class="kpi-builder">
       <div class="kpi-builder-hdr"><span>Key (camelCase)</span><span>Label</span><span>Type</span><span>Unit</span><span></span></div>
       <div id="kpiRows"></div>
@@ -400,8 +441,6 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
       <button class="btn btn-ghost btn-sm" onclick="clearKpiRows()">🗑 Clear</button>
     </div>
     <hr class="dv"/>
-
-    <!-- Levels -->
     <div class="card-title" style="margin-bottom:12px">🎚️ Predefined Levels (JSON)</div>
     <div class="notice warn" style="display:block;margin-bottom:10px">Level presets as a JSON array. Unity also pushes this automatically.</div>
     <textarea id="eLevels" style="min-height:120px;font-family:'JetBrains Mono',monospace;font-size:11px" placeholder='[{"level":1,"label":"Easy","targetScore":10,"totalTime":300}]'></textarea>
@@ -425,6 +464,7 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
     <div class="nav-item" onclick="nav('doctors')" id="nav-doctors"><span class="ni-icon">👨‍⚕️</span><span>Doctors</span><span class="ni-badge" id="badge-doctors">0</span></div>
     <div class="nav-item" onclick="nav('patients')" id="nav-patients"><span class="ni-icon">🧑‍🦽</span><span>Patients</span><span class="ni-badge" id="badge-patients">0</span></div>
     <div class="nav-item" onclick="nav('experiences')" id="nav-experiences"><span class="ni-icon">🎮</span><span>Experiences</span><span class="ni-badge" id="badge-experiences">0</span></div>
+    <div class="nav-item" onclick="nav('headsets')" id="nav-headsets"><span class="ni-icon">🥽</span><span>Headsets</span><span class="ni-badge" id="badge-headsets">0</span></div>
     <div class="sb-section-label">Clinical</div>
     <div class="nav-item" onclick="nav('sessions')" id="nav-sessions"><span class="ni-icon">▶️</span><span>Launch Session</span></div>
     <div class="nav-item" onclick="nav('history')" id="nav-history"><span class="ni-icon">📋</span><span>Session History</span></div>
@@ -432,7 +472,7 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
     <div class="sb-section-label">System</div>
     <div class="nav-item" onclick="nav('log')" id="nav-log"><span class="ni-icon">🖥️</span><span>System Log</span></div>
   </div>
-  <div class="sb-footer"><div class="sb-ver">v4.0.0 — RehabX KPI-Driven</div></div>
+  <div class="sb-footer"><div class="sb-ver">v4.2.0 — RehabX Multi-Session</div></div>
 </nav>
 
 <div class="main">
@@ -450,6 +490,7 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
         <div class="stat-card" style="--accent:var(--amber)"><div class="stat-label">Active Sessions</div><div class="stat-val" id="statActive">—</div><div class="stat-sub">In progress now</div></div>
         <div class="stat-card" style="--accent:var(--lime)"><div class="stat-label">Sessions Today</div><div class="stat-val" id="statToday">—</div><div class="stat-sub">Completed + active</div></div>
         <div class="stat-card" style="--accent:var(--vio)"><div class="stat-label">Experiences</div><div class="stat-val" id="statExp">—</div><div class="stat-sub">VR exercises</div></div>
+        <div class="stat-card" style="--accent:var(--sky)"><div class="stat-label">Headsets Online</div><div class="stat-val" id="statHsOnline">—</div><div class="stat-sub">Last 90 seconds</div></div>
       </div>
       <div class="grid-21" style="gap:20px">
         <div class="card"><div class="card-hdr"><div class="card-title">Recent Sessions</div><button class="btn btn-ghost btn-sm" onclick="nav('history')">View all →</button></div><div id="dashRecentSess"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No sessions yet</div></div></div></div>
@@ -475,9 +516,23 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
       <div class="exp-grid" id="expGrid"></div>
     </div>
 
+    <!-- HEADSETS -->
+    <div class="page" id="page-headsets">
+      <div class="card-hdr" style="margin-bottom:20px">
+        <div class="search-bar" style="flex:1;max-width:320px"><span class="search-icon">🔍</span><input type="text" placeholder="Search headsets…" id="headsetSearch" oninput="filterHeadsets()"/></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm" onclick="loadHeadsets(true)">↺ Refresh</button>
+          <button class="btn btn-secondary btn-sm" onclick="filterHeadsets('online')">🟢 Online only</button>
+          <button class="btn btn-secondary btn-sm" onclick="filterHeadsets('all')">All</button>
+        </div>
+      </div>
+      <div class="headset-grid" id="headsetGrid"></div>
+    </div>
+
     <!-- LAUNCH SESSION -->
     <div class="page" id="page-sessions">
       <div class="grid-12" style="align-items:start">
+        <!-- LEFT: form -->
         <div style="display:flex;flex-direction:column;gap:16px">
           <div class="card">
             <div class="card-title" style="margin-bottom:16px">① Assign Practitioner</div>
@@ -497,14 +552,31 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
           <div class="card">
             <div class="card-title" style="margin-bottom:16px">④ Select Headset</div>
             <div class="fg"><label>Headset ID</label><input id="sessHeadset" type="text" placeholder="Select below or type headset ID"/></div>
+            <div class="hs-filter-notice" id="sessHsFilterNotice" style="display:none">
+              <span class="hs-filter-notice-dot"></span>
+              <span id="sessHsFilterMsg">Showing headsets running this experience</span>
+            </div>
             <div class="hs-chips" id="sessHsChips"></div>
             <div class="scan-bar-row"><div class="scan-bar"><div class="scan-fill" id="sessScanFill" style="width:100%"></div></div><span class="scan-lbl" id="sessScanLbl">scanning…</span></div>
             <div class="fg" style="margin-top:14px"><label>Session Notes <span style="color:var(--t3);font-size:9px;text-transform:none;letter-spacing:0">(optional)</span></label><input id="sessNotes" type="text" placeholder="Right side weakness…"/></div>
           </div>
           <button class="btn btn-primary btn-lg" id="launchBtn" disabled style="width:100%;letter-spacing:1px" onclick="launchSession()">▶ LAUNCH SESSION</button>
         </div>
+
+        <!-- RIGHT: active sessions panel -->
         <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:72px">
-          <div class="card"><div class="card-title" style="margin-bottom:14px">📡 Active Session</div><div id="activePanel"><div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">No active session</div></div></div></div>
+          <div class="card">
+            <div class="card-hdr" style="margin-bottom:14px">
+              <div class="card-title">📡 Active Sessions</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="sess-count-badge" id="sessCountBadge" style="display:none"><span class="sess-count-dot"></span><span id="sessCountVal">0</span></span>
+                <button class="btn btn-ghost btn-sm" onclick="loadActiveSessions()">↺</button>
+              </div>
+            </div>
+            <div id="multiSessPanel">
+              <div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">No active sessions</div></div>
+            </div>
+          </div>
           <div class="card"><div class="card-title" style="margin-bottom:10px">🖥️ Log</div><div class="log-panel" id="sessLogPanel"></div><div style="margin-top:8px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="clearLog()">Clear</button></div></div>
         </div>
       </div>
@@ -542,30 +614,29 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
 
 var DB={sb:null,rch:null,doctors:[],patients:[],experiences:[],history:[],activeSessions:[],headsets:[],logRows:[]};
 var SEL={experience:null,levelMode:'preset',level:null,hand:null,finger:null,autoMode:false,customParams:{}};
-var ACTIVE={sessionId:null,state:null,liveTimer:null,startTime:null,poller:null};
+// Per-session timers: { [sessionId]: { startTime, interval } }
+var SESSION_TIMERS={};
 var HS={timer:null,countdown:10,rafId:null,lastTick:0,INTERVAL:10,WINDOW:90};
 var STORE_KEY='nc_active_sess';
 var COLORS=['var(--teal)','var(--sky)','var(--amber)','var(--vio)','var(--rose)','var(--lime)'];
+var _hsFilter='all';
 
-/* ─── KPI type helpers ─────────────────────────────────────────────────── */
 var KPI_TYPES=['int','float','percentage','angle','duration','text'];
-
 var KPI_PRESETS={
   fruitSlicer:[
-    {key:'score',     label:'Score',          type:'int',        unit:'pts',  higherIsBetter:true},
-    {key:'duration',  label:'Duration',       type:'duration',   unit:'s',    higherIsBetter:false}
+    {key:'score',label:'Score',type:'int',unit:'pts',higherIsBetter:true},
+    {key:'duration',label:'Duration',type:'duration',unit:'s',higherIsBetter:false}
   ],
   rehab:[
-    {key:'score',         label:'Score',            type:'int',        unit:'pts',   higherIsBetter:true},
-    {key:'duration',      label:'Duration',         type:'duration',   unit:'s',     higherIsBetter:false},
-    {key:'accuracy',      label:'Accuracy',         type:'percentage', unit:'%',     higherIsBetter:true},
-    {key:'maxAngle',      label:'Max Angle',        type:'angle',      unit:'°',     higherIsBetter:true},
-    {key:'rangeOfMotion', label:'Range of Motion',  type:'angle',      unit:'°',     higherIsBetter:true},
-    {key:'reps',          label:'Repetitions',      type:'int',        unit:'',      higherIsBetter:true}
+    {key:'score',label:'Score',type:'int',unit:'pts',higherIsBetter:true},
+    {key:'duration',label:'Duration',type:'duration',unit:'s',higherIsBetter:false},
+    {key:'accuracy',label:'Accuracy',type:'percentage',unit:'%',higherIsBetter:true},
+    {key:'maxAngle',label:'Max Angle',type:'angle',unit:'°',higherIsBetter:true},
+    {key:'rangeOfMotion',label:'Range of Motion',type:'angle',unit:'°',higherIsBetter:true},
+    {key:'reps',label:'Repetitions',type:'int',unit:'',higherIsBetter:true}
   ]
 };
 
-/* Format a KPI value based on its type for display */
 function fmtKpiVal(val,type,unit){
   if(val===undefined||val===null)return'—';
   if(type==='duration'){var m=Math.floor(val/60),s=Math.floor(val%60);return m>0?m+'m '+(s<10?'0':'')+s+'s':s+'s';}
@@ -575,7 +646,6 @@ function fmtKpiVal(val,type,unit){
   return val+(unit?' '+unit:'');
 }
 
-/* Render a strip of KPI pills from kpi_data object + kpi_schema */
 function renderKpiStrip(kpiData,kpiSchema){
   if(!kpiData||!Object.keys(kpiData).length)return'<span style="color:var(--t3);font-size:11px">—</span>';
   var schema=kpiSchema||[];
@@ -583,36 +653,28 @@ function renderKpiStrip(kpiData,kpiSchema){
   Object.keys(kpiData).forEach(function(key){
     var ks=schema.find(function(s){return s.key===key;})||{label:key,type:'int',unit:''};
     var val=kpiData[key];
-    var typeClass='kpi-'+ks.type;
-    html+='<div class="kpi-pill '+typeClass+'">';
+    html+='<div class="kpi-pill kpi-'+ks.type+'">';
     html+='<span class="kpi-pill-label">'+esc(ks.label)+'</span>';
     html+='<span class="kpi-pill-val">'+esc(String(fmtKpiVal(val,ks.type,ks.unit)))+'</span>';
     if(ks.unit&&ks.type!=='percentage'&&ks.type!=='angle'&&ks.type!=='duration')html+='<span class="kpi-pill-unit">'+esc(ks.unit)+'</span>';
     html+='</div>';
   });
-  html+='</div>';
-  return html;
+  return html+'</div>';
 }
 
-/* ─── Param schema presets ─────────────────────────────────────────────── */
 var SCHEMA_PRESETS={
   fruitSlicer:[
-    {key:'targetScore',label:'Target Score',type:'int',  min:5,  max:100,step:1,   defaultVal:15,  unit:'pts'},
-    {key:'totalTime',  label:'Session Time',type:'int',  min:30, max:600,step:10,  defaultVal:300, unit:'s'},
-    {key:'spawnDelay', label:'Spawn Delay', type:'range',min:0.2,max:5,  step:0.05,defaultVal:1.25,unit:'s'},
-    {key:'fallTimeout',label:'Fall Timeout',type:'range',min:2,  max:20, step:0.5, defaultVal:8,   unit:'s'},
-    {key:'upwardForce',label:'Upward Force',type:'range',min:0.5,max:10, step:0.1, defaultVal:2.5, unit:''},
-    {key:'depthForce', label:'Depth Force', type:'range',min:0.1,max:5,  step:0.1, defaultVal:1,   unit:''},
-    {key:'bombChance', label:'Bomb %',      type:'int',  min:0,  max:100,step:1,   defaultVal:10,  unit:'%'},
-    {key:'bonusChance',label:'Bonus %',     type:'int',  min:0,  max:100,step:1,   defaultVal:25,  unit:'%'}
+    {key:'targetScore',label:'Target Score',type:'int',min:5,max:100,step:1,defaultVal:15,unit:'pts'},
+    {key:'totalTime',label:'Session Time',type:'int',min:30,max:600,step:10,defaultVal:300,unit:'s'},
+    {key:'spawnDelay',label:'Spawn Delay',type:'range',min:0.2,max:5,step:0.05,defaultVal:1.25,unit:'s'},
+    {key:'fallTimeout',label:'Fall Timeout',type:'range',min:2,max:20,step:0.5,defaultVal:8,unit:'s'},
+    {key:'bombChance',label:'Bomb %',type:'int',min:0,max:100,step:1,defaultVal:10,unit:'%'}
   ],
   balance:[
-    {key:'targetScore',      label:'Target Score',        type:'int',  min:5,  max:200,step:5,  defaultVal:50, unit:'pts'},
-    {key:'totalTime',        label:'Session Time',        type:'int',  min:30, max:600,step:10, defaultVal:180,unit:'s'},
-    {key:'balanceThreshold', label:'Balance Threshold',   type:'range',min:0.1,max:2,  step:0.05,defaultVal:0.5,unit:'m'},
-    {key:'tiltSensitivity',  label:'Tilt Sensitivity',    type:'range',min:0.1,max:3,  step:0.1, defaultVal:1,  unit:''},
-    {key:'obstacleSpeed',    label:'Obstacle Speed',      type:'range',min:0.5,max:5,  step:0.25,defaultVal:1.5,unit:'m/s'},
-    {key:'hapticFeedback',   label:'Haptic Feedback',     type:'bool', min:0,  max:1,  step:1,   defaultVal:1,  unit:''}
+    {key:'targetScore',label:'Target Score',type:'int',min:5,max:200,step:5,defaultVal:50,unit:'pts'},
+    {key:'totalTime',label:'Session Time',type:'int',min:30,max:600,step:10,defaultVal:180,unit:'s'},
+    {key:'balanceThreshold',label:'Balance Threshold',type:'range',min:0.1,max:2,step:0.05,defaultVal:0.5,unit:'m'},
+    {key:'hapticFeedback',label:'Haptic Feedback',type:'bool',min:0,max:1,step:1,defaultVal:1,unit:''}
   ]
 };
 
@@ -635,6 +697,7 @@ function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'—';}
 function fmtDate(iso){if(!iso)return'—';var d=new Date(iso);return d.toLocaleDateString()+' '+d.toTimeString().slice(0,5);}
 function fmtAge(iso){var s=Math.round((Date.now()-new Date(iso).getTime())/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago';}
 function fmtDur(v){if(v===null||v===undefined)return'—';var m=Math.floor(v/60),s=Math.floor(v%60);return m+':'+(s<10?'0':'')+s;}
+function fmtLastSeen(iso){if(!iso)return'Never';var s=Math.round((Date.now()-new Date(iso).getTime())/1000);if(s<15)return'Just now';if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago';}
 function parseLevels(raw){if(!raw)return[];if(Array.isArray(raw))return raw;try{return JSON.parse(raw);}catch(_){return[];}}
 function parseSchema(raw){if(!raw)return[];if(Array.isArray(raw))return raw;try{return JSON.parse(raw);}catch(_){return[];}}
 function randColor(str){var h=0;for(var i=0;i<str.length;i++)h=str.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length];}
@@ -644,7 +707,7 @@ function log(msg,type){var t=new Date().toTimeString().slice(0,8);DB.logRows.uns
 function renderLog(){var html=DB.logRows.map(function(r){return'<div class="log-row"><span class="log-time">'+r.t+'</span><span class="log-msg '+r.c+'">'+esc(r.m)+'</span></div>';}).join('');if(el('sessLogPanel'))el('sessLogPanel').innerHTML=html||'<div class="log-row"><span class="log-time">--:--:--</span><span class="log-msg">Ready.</span></div>';if(el('fullLogPanel'))el('fullLogPanel').innerHTML=html;}
 window.clearLog=function(all){DB.logRows=[];renderLog();};
 
-var PAGE_TITLES={dashboard:'Dashboard',doctors:'Doctors',patients:'Patients',experiences:'Experiences',sessions:'Launch Session',history:'Session History',active:'Active Sessions',log:'System Log'};
+var PAGE_TITLES={dashboard:'Dashboard',doctors:'Doctors',patients:'Patients',experiences:'Experiences',headsets:'Headsets',sessions:'Launch Session',history:'Session History',active:'Active Sessions',log:'System Log'};
 window.nav=function(page){
   qa('.page').forEach(function(p){p.classList.remove('active');});
   qa('.nav-item').forEach(function(n){n.classList.remove('active');});
@@ -658,6 +721,7 @@ window.nav=function(page){
   if(page==='doctors')renderDoctors();
   if(page==='patients')renderPatients();
   if(page==='experiences')renderExperiences();
+  if(page==='headsets'){loadHeadsets(true);renderHeadsets();}
 };
 window.openModal=function(id){el(id).classList.add('open');};
 window.closeModal=function(id){el(id).classList.remove('open');};
@@ -675,7 +739,7 @@ function initSB(url,key){
     el('sbConn').classList.add('connected');el('sbConnTxt').textContent='Connected';
     log('Supabase connected.','ok');closeModal('connModal');
     subscribeRT();
-    Promise.all([loadDoctors(),loadPatients(),loadExperiences()]).then(function(){loadDashboard();loadActiveSessions();restoreActiveSession();});
+    Promise.all([loadDoctors(),loadPatients(),loadExperiences(),loadHeadsets(false)]).then(function(){loadDashboard();loadActiveSessions();});
   }catch(e){el('sbConnTxt').textContent='Error';log('Connection error: '+e.message,'err');}
 }
 function showNote(id,msg,type){var n=el(id);if(!n)return;n.className='notice '+type;n.textContent=msg;}
@@ -683,10 +747,12 @@ function subscribeRT(){
   if(!DB.sb)return;if(DB.rch)DB.sb.removeChannel(DB.rch);
   DB.rch=DB.sb.channel('nc_rt')
     .on('postgres_changes',{event:'*',schema:'public',table:'game_sessions'},function(p){
-      if(p.new&&ACTIVE.sessionId&&p.new.id===ACTIVE.sessionId)onSessUpdate(p.new);
+      if(p.new)onAnySessionUpdate(p.new);
       loadActiveSessions();updateDashStats();
     })
-    .on('postgres_changes',{event:'*',schema:'public',table:'headsets'},function(){loadHeadsets(false);})
+    .on('postgres_changes',{event:'*',schema:'public',table:'headsets'},function(){
+      loadHeadsets(false);
+    })
     .on('postgres_changes',{event:'*',schema:'public',table:'experiences'},function(){loadExperiences();log('Experience updated from headset.','info');})
     .subscribe(function(s){log('Realtime: '+s,s==='SUBSCRIBED'?'ok':'warn');});
 }
@@ -719,7 +785,7 @@ var _kpiRows=[];
 function initKpiRows(rows){_kpiRows=rows?rows.slice():[];renderKpiRows();}
 function renderKpiRows(){
   var container=el('kpiRows');if(!container)return;
-  if(!_kpiRows.length){container.innerHTML='<div style="color:var(--t3);font-family:\'JetBrains Mono\',monospace;font-size:10px;padding:6px 0">No KPIs yet. Unity will push these automatically, or define them here.</div>';return;}
+  if(!_kpiRows.length){container.innerHTML='<div style="color:var(--t3);font-family:\'JetBrains Mono\',monospace;font-size:10px;padding:6px 0">No KPIs yet.</div>';return;}
   container.innerHTML=_kpiRows.map(function(row,i){
     return'<div class="kpi-builder-row">'+
       '<input class="schema-input" type="text" placeholder="score" value="'+esc(row.key||'')+'" onchange="updateKR('+i+',\'key\',this.value)"/>'+
@@ -736,7 +802,6 @@ window.addKpiRow=function(){_kpiRows.push({key:'',label:'',type:'int',unit:'',hi
 window.clearKpiRows=function(){_kpiRows=[];renderKpiRows();};
 window.insertPresetKpi=function(preset){_kpiRows=(KPI_PRESETS[preset]||[]).map(function(k){return Object.assign({},k);});renderKpiRows();};
 
-/* hand/finger note update for experience modal */
 window.updateHandFingerNote=function(){
   var hm=el('eHandMode').value,fm=el('eFingerMode').value;
   var note=el('handFingerNote');if(!note)return;
@@ -766,9 +831,8 @@ window.savePatient=function(){var id=el('patientId').value;var payload={first_na
 window.deletePatient=function(id){if(!confirm('Delete this patient?'))return;DB.sb.from('patients').delete().eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Patient deleted.','warn');loadPatients();});};
 function refreshPatientSelects(){var opts='<option value="">— Select Patient —</option>'+DB.patients.map(function(p){return'<option value="'+p.id+'">'+esc(p.first_name+' '+p.last_name)+'</option>';}).join('');if(el('sessPatient'))el('sessPatient').innerHTML=opts;}
 
-/* ═══ EXPERIENCES (with param_schema + kpi_schema) ════════════════════════ */
+/* ═══ EXPERIENCES ═════════════════════════════════════════════════════════ */
 function loadExperiences(){if(!DB.sb)return Promise.resolve();return DB.sb.from('experiences').select('*').order('name').then(function(r){if(r.error){log('Exp: '+r.error.message,'err');return;}DB.experiences=r.data||[];el('badge-experiences').textContent=DB.experiences.length;renderExperiences();renderSessExpGrid();});}
-
 function renderExperiences(){
   var grid=el('expGrid');
   if(!DB.experiences.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🎮</div><div class="empty-msg">No experiences yet</div></div>';return;}
@@ -780,8 +844,8 @@ function renderExperiences(){
     var hm=e.hand_mode||'none',fm=e.finger_mode||'none';
     var interactionBadge=hm!=='none'?(fm!=='none'?'🙌 Hand+Finger':'✋ Hand only'):(fm!=='none'?'☝️ Finger only':'🤲 No interaction');
     var tags=[e.category,interactionBadge,levs.length+' levels',schema.length+' params'].filter(Boolean);
-    var paramPrev=schema.slice(0,3).map(function(p){return'<span class="schema-tag type-'+esc(p.type||'range')+'">'+esc(p.key)+'</span>';}).join('')+(schema.length>3?'<span class="schema-tag">+'+( schema.length-3)+'</span>':'');
-    var kpiPrev=kpiSchema.slice(0,4).map(function(k){return'<span class="schema-tag type-'+esc(k.type||'int')+'">'+esc(k.label||k.key)+'</span>';}).join('')+(kpiSchema.length>4?'<span class="schema-tag">+'+( kpiSchema.length-4)+'</span>':'');
+    var paramPrev=schema.slice(0,3).map(function(p){return'<span class="schema-tag type-'+esc(p.type||'range')+'">'+esc(p.key)+'</span>';}).join('')+(schema.length>3?'<span class="schema-tag">+'+(schema.length-3)+'</span>':'');
+    var kpiPrev=kpiSchema.slice(0,4).map(function(k){return'<span class="schema-tag type-'+esc(k.type||'int')+'">'+esc(k.label||k.key)+'</span>';}).join('')+(kpiSchema.length>4?'<span class="schema-tag">+'+(kpiSchema.length-4)+'</span>':'');
     return'<div class="exp-card" style="--exp-color:'+col+'">'+
       '<span class="exp-icon">'+esc(e.icon||'🎮')+'</span>'+
       '<div class="exp-name">'+esc(e.name)+'</div>'+
@@ -793,13 +857,11 @@ function renderExperiences(){
     '</div>';
   }).join('');
 }
-
 window.openExpModal=function(){
   el('expId').value='';el('eName').value='';el('eIcon').value='🎮';el('eDesc').value='';
   el('ePackage').value='';el('eCategory').value='';el('eHandMode').value='single';el('eFingerMode').value='all';
   el('eLevels').value='';el('expModalTitle').textContent='Add Experience';el('expNote').className='notice';
-  initSchemaRows([]);initKpiRows([]);updateHandFingerNote();
-  openModal('expModal');
+  initSchemaRows([]);initKpiRows([]);updateHandFingerNote();openModal('expModal');
 };
 window.editExp=function(id){
   var e=DB.experiences.find(function(x){return x.id===id;});if(!e)return;
@@ -808,15 +870,11 @@ window.editExp=function(id){
   el('eHandMode').value=e.hand_mode||'single';el('eFingerMode').value=e.finger_mode||'all';
   el('eLevels').value=e.levels?JSON.stringify(parseLevels(e.levels),null,2):'';
   el('expModalTitle').textContent='Edit Experience';el('expNote').className='notice';
-  initSchemaRows(parseSchema(e.param_schema));
-  initKpiRows(parseSchema(e.kpi_schema));
-  updateHandFingerNote();
-  openModal('expModal');
+  initSchemaRows(parseSchema(e.param_schema));initKpiRows(parseSchema(e.kpi_schema));updateHandFingerNote();openModal('expModal');
 };
 window.saveExperience=function(){
   var id=el('expId').value;
-  var rawLevels=el('eLevels').value.trim();
-  var lr='[]';
+  var rawLevels=el('eLevels').value.trim();var lr='[]';
   if(rawLevels){try{JSON.parse(rawLevels);lr=rawLevels;}catch(_){showNote('expNote','Invalid Levels JSON.','err');return;}}
   var schema=_schemaRows.filter(function(r){return r.key&&r.key.trim();}).map(function(r){
     var out={key:r.key.trim(),label:r.label||r.key,type:r.type||'range',defaultVal:parseFloat(r.defaultVal)||0,unit:r.unit||''};
@@ -835,7 +893,71 @@ window.saveExperience=function(){
 };
 window.deleteExp=function(id){if(!confirm('Delete?'))return;DB.sb.from('experiences').delete().eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Deleted.','warn');loadExperiences();});};
 
-/* ═══ SESSION LAUNCHER — schema-driven + dynamic hand/finger ═════════════ */
+/* ═══ HEADSETS PAGE ═══════════════════════════════════════════════════════ */
+var _hsSearchQ='';
+window.filterHeadsets=function(mode){
+  if(typeof mode==='string'&&mode!==undefined){_hsFilter=mode;}
+  if(el('headsetSearch'))_hsSearchQ=el('headsetSearch').value.toLowerCase();
+  renderHeadsets();
+};
+function renderHeadsets(){
+  var grid=el('headsetGrid');if(!grid)return;
+  var now=Date.now();
+  var ONLINE_WINDOW=HS.WINDOW*1000;
+  var rows=DB.headsets.filter(function(h){
+    var q=_hsSearchQ;
+    var matchSearch=!q||(h.name||'').toLowerCase().indexOf(q)>-1||(h.headset_id||'').toLowerCase().indexOf(q)>-1||(h.model||'').toLowerCase().indexOf(q)>-1;
+    if(!matchSearch)return false;
+    if(_hsFilter==='online'){var age=now-new Date(h.last_seen||0).getTime();return age<ONLINE_WINDOW&&h.status!=='offline';}
+    return true;
+  });
+  el('badge-headsets').textContent=DB.headsets.filter(function(h){var age=now-new Date(h.last_seen||0).getTime();return age<ONLINE_WINDOW;}).length;
+  if(el('statHsOnline'))el('statHsOnline').textContent=el('badge-headsets').textContent;
+  if(!rows.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🥽</div><div class="empty-msg">No headsets found</div></div>';return;}
+  grid.innerHTML=rows.map(function(h){
+    var age=now-new Date(h.last_seen||0).getTime();
+    var isOnline=age<ONLINE_WINDOW&&h.status!=='offline';
+    var isInGame=h.status==='in_game'&&isOnline;
+    var statusKey=isInGame?'in_game':isOnline?'online':'offline';
+    var statusLabel=isInGame?'In Game':isOnline?'Online':'Offline';
+    var curSess=isInGame?DB.activeSessions.find(function(s){return s.headset_id===h.headset_id;}):null;
+    var cardClass='headset-card status-'+statusKey;
+    return'<div class="'+cardClass+'" id="hsc-'+esc(h.headset_id)+'">'+
+      '<div class="hs-card-hdr">'+
+        '<div class="hs-card-icon">🥽</div>'+
+        '<div class="hs-card-info">'+
+          '<div class="hs-card-name" id="hsname-'+esc(h.headset_id)+'">'+esc(h.name||h.model||'Headset')+'</div>'+
+          '<div class="hs-card-model">'+esc(h.model||h.headset_id)+'</div>'+
+        '</div>'+
+        '<div class="hs-card-status '+statusKey+'"><span class="hs-status-dot"></span>'+statusLabel+'</div>'+
+      '</div>'+
+      '<div class="hs-card-meta">'+
+        '<div class="hs-meta-cell"><div class="hs-meta-label">Headset ID</div><div class="hs-meta-val" style="font-size:9px">'+esc(h.headset_id)+'</div></div>'+
+        '<div class="hs-meta-cell"><div class="hs-meta-label">Last seen</div><div class="hs-meta-val">'+fmtLastSeen(h.last_seen)+'</div></div>'+
+      '</div>'+
+      (curSess?'<div class="hs-exp-badge">▶ '+esc(curSess.experience_name||'Session')+'</div>':'')+
+      '<div class="hs-rename-row">'+
+        '<input type="text" id="hsrn-'+esc(h.headset_id)+'" value="'+esc(h.name||'')+'" placeholder="Display name…"/>'+
+        '<button class="btn btn-primary btn-sm" onclick="renameHeadset(\''+esc(h.headset_id)+'\')">✓ Save</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+window.renameHeadset=function(id){
+  if(!DB.sb)return;
+  var inp=el('hsrn-'+id);if(!inp)return;
+  var newName=inp.value.trim();if(!newName){toast('Name cannot be empty.','warn');return;}
+  DB.sb.from('headsets').update({name:newName}).eq('headset_id',id).then(function(r){
+    if(r.error){toast(r.error.message,'err');return;}
+    var h=DB.headsets.find(function(x){return x.headset_id===id;});
+    if(h)h.name=newName;
+    var nameEl=el('hsname-'+id);if(nameEl)nameEl.textContent=newName;
+    toast('Headset renamed.','ok');
+    log('Headset '+id.slice(0,12)+'… renamed to "'+newName+'"','ok');
+  });
+};
+
+/* ═══ SESSION LAUNCHER ════════════════════════════════════════════════════ */
 function populateSessDropdowns(){refreshDoctorSelects();refreshPatientSelects();renderSessExpGrid();}
 function renderSessExpGrid(){
   var grid=el('sessExpGrid');if(!grid)return;
@@ -854,10 +976,11 @@ function renderSessExpGrid(){
 }
 window.selectExp=function(id){
   SEL.experience=DB.experiences.find(function(e){return e.id===id;});
-  SEL.level=null;SEL.hand=null;SEL.finger=null;SEL.levelMode='preset';SEL.autoMode=false;
-  SEL.customParams={};
+  SEL.level=null;SEL.hand=null;SEL.finger=null;SEL.levelMode='preset';SEL.autoMode=false;SEL.customParams={};
   if(SEL.experience){parseSchema(SEL.experience.param_schema).forEach(function(p){SEL.customParams[p.key]=p.defaultVal;});}
-  renderSessExpGrid();buildConfigPanel();checkLaunch();
+  renderSessExpGrid();buildConfigPanel();
+  renderHsChips();
+  checkLaunch();
 };
 window.onSessChange=function(){checkLaunch();};
 
@@ -871,16 +994,12 @@ function buildConfigPanel(){
   var hasHand=exp.hand_mode&&exp.hand_mode!=='none';
   var hasFinger=exp.finger_mode&&exp.finger_mode!=='none';
   var html='';
-
-  // Mode tabs (only show if there's a param schema)
   if(schema.length){
     html+='<div class="mode-tabs">'+
       '<button class="mode-tab '+(SEL.levelMode==='preset'?'active-teal':'')+'" onclick="switchSessMode(\'preset\')">🎯 Predefined Level</button>'+
       '<button class="mode-tab '+(SEL.levelMode==='custom'?'active-vio':'')+'" onclick="switchSessMode(\'custom\')">⚙️ Custom Config</button>'+
     '</div>';
   }
-
-  // Preset panel
   html+='<div id="sPresetPanel" style="display:'+(SEL.levelMode==='preset'?'block':'none')+'">';
   if(levels.length){
     html+='<div class="lbl" style="margin-bottom:8px">Select Level</div><div class="btn-group" style="margin-bottom:14px">';
@@ -897,17 +1016,12 @@ function buildConfigPanel(){
   html+='<div class="lbl" style="margin-bottom:8px">Session Mode</div><div class="btn-group" style="margin-bottom:0">'+
     '<div class="btn-toggle'+(SEL.autoMode===false?' sel-teal':'')+'" onclick="pickAutoMode(false)">🎯 Manual</div>'+
     '<div class="btn-toggle'+(SEL.autoMode===true?' sel-amber':'')+'" onclick="pickAutoMode(true)">🚀 Auto (L1→L'+levels.length+')</div>'+
-  '</div>';
-  html+='</div>';
-
-  // Custom panel
+  '</div></div>';
   if(schema.length){
     html+='<div id="sCustomPanel" style="display:'+(SEL.levelMode==='custom'?'block':'none')+'">';
     html+=buildDynamicParamPanel(schema);
     html+='</div>';
   }
-
-  // ── Hand / Finger selection — only shown if experience requires it ──
   if(hasHand||hasFinger){
     html+='<hr class="dv"/>';
     if(hasHand){
@@ -921,10 +1035,8 @@ function buildConfigPanel(){
       '</div></div>';
     }
   }else{
-    // Show a subtle note so the clinician knows no selection is needed
     html+='<hr class="dv"/><div class="interaction-note">🤲 This experience does not require hand or finger selection — it will use both hands / full body by default.</div>';
   }
-
   body.innerHTML=html;
   schema.forEach(function(p){if(p.type==='range'||p.type==='int'){var inp=el('cp_'+p.key);var lbl=el('cpv_'+p.key);if(inp&&lbl)lbl.textContent=inp.value+(p.unit||'');}});
 }
@@ -932,10 +1044,8 @@ function buildConfigPanel(){
 function buildDynamicParamPanel(schema){
   var html='<div class="dyn-param-section"><div class="dyn-param-section-title">Custom Parameters</div><div class="param-grid">';
   schema.forEach(function(p){html+=buildParamControl(p,SEL.customParams[p.key]!==undefined?SEL.customParams[p.key]:p.defaultVal);});
-  html+='</div></div>';
-  return html;
+  return html+'</div></div>';
 }
-
 function buildParamControl(p,val){
   var id='cp_'+p.key;
   var html='<div class="fg"><label>'+esc(p.label||p.key)+(p.unit?' <span style="color:var(--t3);font-size:8px;text-transform:none;letter-spacing:0">('+esc(p.unit)+')</span>':'')+' <span class="schema-tag type-'+esc(p.type||'range')+'">'+esc(p.type||'range')+'</span></label>';
@@ -955,14 +1065,11 @@ function buildParamControl(p,val){
   }
   return html+'</div>';
 }
-
 window.setCustomParam=function(key,val){SEL.customParams[key]=val;};
 window.switchSessMode=function(mode){
   SEL.levelMode=mode;
-  if(mode==='custom'&&SEL.experience){
-    parseSchema(SEL.experience.param_schema).forEach(function(p){if(SEL.customParams[p.key]===undefined)SEL.customParams[p.key]=p.defaultVal;});
-    SEL.level={level:0};
-  }else if(mode==='preset'){SEL.level=null;}
+  if(mode==='custom'&&SEL.experience){parseSchema(SEL.experience.param_schema).forEach(function(p){if(SEL.customParams[p.key]===undefined)SEL.customParams[p.key]=p.defaultVal;});SEL.level={level:0};}
+  else if(mode==='preset'){SEL.level=null;}
   if(el('sPresetPanel'))el('sPresetPanel').style.display=mode==='preset'?'block':'none';
   if(el('sCustomPanel'))el('sCustomPanel').style.display=mode==='custom'?'block':'none';
   qa('.mode-tab').forEach(function(t,i){t.classList.remove('active-teal','active-vio');if(i===0&&mode==='preset')t.classList.add('active-teal');if(i===1&&mode==='custom')t.classList.add('active-vio');});
@@ -980,11 +1087,12 @@ function checkLaunch(){
   var handOk=!hasHand||SEL.hand;
   var fingerOk=!hasFinger||SEL.finger;
   var levelOk=SEL.levelMode==='custom'||(SEL.level&&SEL.level.level>0);
-  var ok=DB.sb&&el('sessDoctor')&&el('sessDoctor').value&&el('sessPatient')&&el('sessPatient').value&&exp&&levelOk&&handOk&&fingerOk&&el('sessHeadset')&&el('sessHeadset').value.trim()&&!ACTIVE.sessionId;
+  // ✅ No single-session lock — multiple simultaneous sessions are allowed
+  var ok=DB.sb&&el('sessDoctor')&&el('sessDoctor').value&&el('sessPatient')&&el('sessPatient').value&&exp&&levelOk&&handOk&&fingerOk&&el('sessHeadset')&&el('sessHeadset').value.trim();
   if(el('launchBtn'))el('launchBtn').disabled=!ok;
 }
 
-/* ═══ LAUNCH SESSION ══════════════════════════════════════════════════════ */
+/* ═══ LAUNCH SESSION (multi) ══════════════════════════════════════════════ */
 window.launchSession=function(){
   if(!DB.sb)return;
   var exp=SEL.experience,doctorId=el('sessDoctor').value,patientId=el('sessPatient').value,headset=el('sessHeadset').value.trim(),notes=el('sessNotes').value.trim();
@@ -992,151 +1100,229 @@ window.launchSession=function(){
   var patientName=patient?patient.first_name+' '+patient.last_name:'Unknown';
   var doctor=DB.doctors.find(function(d){return d.id===doctorId;});
   var doctorName=doctor?doctor.first_name+' '+doctor.last_name:'Unknown';
-
   var customParamsObj={};
-  if(SEL.levelMode==='preset'&&SEL.level){
-    Object.keys(SEL.level).forEach(function(k){if(k!=='level'&&k!=='label')customParamsObj[k]=SEL.level[k];});
-  }else if(SEL.levelMode==='custom'){
-    parseSchema(exp.param_schema).forEach(function(p){customParamsObj[p.key]=SEL.customParams[p.key]!==undefined?SEL.customParams[p.key]:p.defaultVal;});
-  }
-
-  var payload={
-    patient_name:patientName,patient_id:patientId||null,
-    doctor_id:doctorId||null,doctor_name:doctorName,
-    experience_id:exp.id,experience_name:exp.name,
-    headset_id:headset,
-    hand:SEL.hand||null,       // null = not required by this experience
-    finger:SEL.finger||null,   // null = not required by this experience
-    auto_mode:SEL.autoMode===true,
-    status:'pending',notes:notes||null,
-    level:SEL.level?SEL.level.level:0,
-    custom_params:customParamsObj
-  };
-
+  if(SEL.levelMode==='preset'&&SEL.level){Object.keys(SEL.level).forEach(function(k){if(k!=='level'&&k!=='label')customParamsObj[k]=SEL.level[k];});}
+  else if(SEL.levelMode==='custom'){parseSchema(exp.param_schema).forEach(function(p){customParamsObj[p.key]=SEL.customParams[p.key]!==undefined?SEL.customParams[p.key]:p.defaultVal;});}
+  var payload={patient_name:patientName,patient_id:patientId||null,doctor_id:doctorId||null,doctor_name:doctorName,experience_id:exp.id,experience_name:exp.name,headset_id:headset,hand:SEL.hand||null,finger:SEL.finger||null,auto_mode:SEL.autoMode===true,status:'pending',notes:notes||null,level:SEL.level?SEL.level.level:0,custom_params:customParamsObj};
   var btn=el('launchBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span> LAUNCHING…';
   DB.sb.from('game_sessions').insert([payload]).select().single().then(function(r){
     if(r.error){log('Launch failed: '+r.error.message,'err');toast(r.error.message,'err');btn.disabled=false;btn.innerHTML='▶ LAUNCH SESSION';return;}
-    ACTIVE.sessionId=r.data.id;localStorage.setItem(STORE_KEY,r.data.id);
-    log('✅ Launched ['+r.data.id.slice(0,8)+'…] → '+patientName+' | '+exp.name,'ok');
-    toast('Session launched!','ok');
-    btn.innerHTML='✅ SESSION STARTED';btn.style.background='var(--teal)';btn.style.opacity='0.6';
-    showActivePanel(r.data);setLiveSessState('waiting');startActivePoller();loadHistory();
+    log('✅ Launched ['+r.data.id.slice(0,8)+'…] → '+patientName+' | '+exp.name+' on '+headset,'ok');
+    toast('Session launched: '+patientName+' → '+exp.name,'ok');
+    // Start a client-side timer for this session
+    SESSION_TIMERS[r.data.id]={startTime:Date.now(),interval:null};
+    // Re-enable immediately so another session can be launched right away
+    btn.disabled=false;btn.innerHTML='▶ LAUNCH SESSION';
     resetSessionForm();
+    loadActiveSessions();loadHistory();
   });
 };
-function resetSessionForm(){
-  SEL.experience=null;SEL.level=null;SEL.hand=null;SEL.finger=null;
-  SEL.levelMode='preset';SEL.autoMode=false;SEL.customParams={};
-  if(el('sessDoctor'))el('sessDoctor').value='';
-  if(el('sessPatient'))el('sessPatient').value='';
-  if(el('sessNotes'))el('sessNotes').value='';
-  if(el('sessHeadset'))el('sessHeadset').value='';
-  renderSessExpGrid();
-  renderHsChips();
-  if(el('sessConfigCard'))el('sessConfigCard').style.display='none';
-}
-/* ═══ ACTIVE PANEL ════════════════════════════════════════════════════════ */
-function showActivePanel(row){
-  el('activePanel').innerHTML='<div class="live-card">'+
-    '<div class="live-hdr"><div class="live-badge"><span class="live-dot"></span>LIVE</div>'+
-    '<strong style="color:var(--t0)">'+esc(row.patient_name||'')+'</strong>'+
-    '<span class="state-pill waiting" id="livePill">WAITING</span>'+
-    '<span id="liveTimer" style="margin-left:auto;font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--teal)"></span></div>'+
-    '<div class="live-meta-grid">'+
-      lmCell('Experience',esc(row.experience_name||'—'))+
-      lmCell('Level',row.level===0?'<span style="color:var(--vio)">Custom</span>':'L'+row.level)+
-      lmCell('Hand',row.hand?cap(row.hand):'<span style="color:var(--t3)">N/A</span>')+
-      lmCell('Finger',row.finger?cap(row.finger):'<span style="color:var(--t3)">N/A</span>')+
-      lmCell('Mode',row.auto_mode?'🚀 Auto':'🎯 Manual')+
-    '</div>'+
-    '<div id="liveKpiStrip"></div>'+
-    '<div class="ctrl-row">'+
-      '<button class="ctrl-btn ctrl-play" id="btnPlay" onclick="resumeSess()" style="display:none">▶ Resume</button>'+
-      '<button class="ctrl-btn ctrl-pause" id="btnPause" onclick="pauseSess()">⏸ Pause</button>'+
-      '<button class="ctrl-btn ctrl-stop" id="btnStop" onclick="stopSess()">⏹ Stop</button>'+
-    '</div></div>';
-}
-function lmCell(label,val){return'<div class="lm-cell"><div class="lm-label">'+label+'</div><div class="lm-val">'+val+'</div></div>';}
-function hideActivePanel(){el('activePanel').innerHTML='<div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">No active session</div></div>';}
-function setLiveSessState(state){ACTIVE.state=state;var pill=el('livePill');if(!pill)return;pill.className='state-pill '+state;pill.textContent=state.toUpperCase();if(state==='active'){if(el('btnPlay'))el('btnPlay').style.display='none';if(el('btnPause'))el('btnPause').style.display='';startLiveTimer();}else if(state==='paused'){if(el('btnPlay'))el('btnPlay').style.display='';if(el('btnPause'))el('btnPause').style.display='none';stopLiveTimer();}else{if(el('btnPlay'))el('btnPlay').style.display='none';if(el('btnPause'))el('btnPause').style.display='none';}}
-window.pauseSess=function(){if(!DB.sb||!ACTIVE.sessionId)return;DB.sb.from('game_sessions').update({status:'paused'}).eq('id',ACTIVE.sessionId).then(function(r){if(r.error){toast(r.error.message,'err');return;}log('⏸ Paused.','warn');setLiveSessState('paused');});};
-window.resumeSess=function(){if(!DB.sb||!ACTIVE.sessionId)return;DB.sb.from('game_sessions').update({status:'active'}).eq('id',ACTIVE.sessionId).then(function(r){if(r.error){toast(r.error.message,'err');return;}log('▶ Resumed.','ok');setLiveSessState('active');});};
-window.stopSess=function(){if(!DB.sb||!ACTIVE.sessionId)return;if(!confirm('Stop this session?'))return;var idToStop=ACTIVE.sessionId;clearActive();hideActivePanel();DB.sb.from('game_sessions').update({status:'stopped'}).eq('id',idToStop).then(function(r){if(r.error){toast(r.error.message,'err');return;}log('⏹ Stopped.','warn');toast('Session stopped.','warn');loadHistory();loadActiveSessions();});};
-function onSessUpdate(row){
-  if(row.id!==ACTIVE.sessionId)return;
-  if(row.status==='active'&&ACTIVE.state!=='active'){log('▶ Game started on headset.','ok');setLiveSessState('active');}
-  if(row.status==='paused'&&ACTIVE.state!=='paused'){log('⏸ Headset paused.','warn');setLiveSessState('paused');}
-  if(row.status==='completed'){
-    // Show KPI results in active panel before clearing
-    var kpiData=row.kpi_data&&typeof row.kpi_data==='object'?row.kpi_data:(row.kpi_data?JSON.parse(row.kpi_data):{});
-    var exp=SEL.experience||DB.experiences.find(function(e){return e.name===row.experience_name;});
-    var kpiSchema=exp?parseSchema(exp.kpi_schema):[];
-    var kpiHtml=renderKpiStrip(kpiData,kpiSchema);
-    log('✅ Completed! '+Object.keys(kpiData).map(function(k){return k+':'+kpiData[k];}).join(' | '),'ok');
-    toast('Session completed!','ok');
-    var strip=el('liveKpiStrip');if(strip)strip.innerHTML=kpiHtml;
-    setTimeout(function(){clearActive();hideActivePanel();},3000);
-    loadHistory();
-  }
-  if(row.status==='stopped'||row.status==='failed'){log('Session '+row.status+'.','warn');clearActive();hideActivePanel();}
-}
-function clearActive(){stopLiveTimer();stopActivePoller();localStorage.removeItem(STORE_KEY);ACTIVE.sessionId=null;ACTIVE.state=null;ACTIVE.startTime=null;var btn=el('launchBtn');if(btn){btn.disabled=false;btn.innerHTML='▶ LAUNCH SESSION';}checkLaunch();}
-function startActivePoller(){if(ACTIVE.poller)return;ACTIVE.poller=setInterval(function(){if(!ACTIVE.sessionId||!DB.sb){stopActivePoller();return;}DB.sb.from('game_sessions').select('*').eq('id',ACTIVE.sessionId).single().then(function(r){if(r.data)onSessUpdate(r.data);});},3000);}
-function stopActivePoller(){if(ACTIVE.poller)clearInterval(ACTIVE.poller);ACTIVE.poller=null;}
-function restoreActiveSession(){var id=localStorage.getItem(STORE_KEY);if(!id||!DB.sb)return;DB.sb.from('game_sessions').select('*').eq('id',id).single().then(function(r){if(r.error||!r.data){localStorage.removeItem(STORE_KEY);return;}var row=r.data;if(['pending','active','paused'].indexOf(row.status)===-1){localStorage.removeItem(STORE_KEY);return;}ACTIVE.sessionId=id;nav('sessions');showActivePanel(row);setLiveSessState(row.status==='paused'?'paused':row.status==='active'?'active':'waiting');startActivePoller();log('Session restored: '+row.patient_name+' ('+row.status+')','ok');});}
-function startLiveTimer(){if(ACTIVE.liveTimer)return;ACTIVE.startTime=ACTIVE.startTime||Date.now();ACTIVE.liveTimer=setInterval(function(){var e2=el('liveTimer');if(!e2)return;var e=Math.floor((Date.now()-ACTIVE.startTime)/1000);var m=Math.floor(e/60),s=e%60;e2.textContent=m+':'+(s<10?'0':'')+s;},1000);}
-function stopLiveTimer(){if(ACTIVE.liveTimer)clearInterval(ACTIVE.liveTimer);ACTIVE.liveTimer=null;}
 
-/* ═══ HEADSETS ════════════════════════════════════════════════════════════ */
-function loadHeadsets(manual){if(!DB.sb)return;var since=new Date(Date.now()-HS.WINDOW*1000).toISOString();DB.sb.from('headsets').select('headset_id,name,model,status,last_seen').gte('last_seen',since).order('last_seen',{ascending:false}).then(function(r){if(r.error)return;DB.headsets=r.data||[];renderHsChips();});}
-function renderHsChips(){var container=el('sessHsChips');if(!container)return;var cur=el('sessHeadset')?el('sessHeadset').value.trim():'';if(!DB.headsets.length){container.innerHTML='<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--t3);font-style:italic">No headsets online</span>';return;}container.innerHTML='';DB.headsets.forEach(function(h){var isMe=cur===h.headset_id,ig=h.status==='in_game';var chip=document.createElement('div');chip.className='hs-chip'+(isMe?' selected':'')+(ig&&!isMe?' in-game':'');chip.innerHTML='<div class="hs-chip-dot"></div><div><div class="hs-chip-name">'+esc(h.model||h.name||'Headset')+'</div><div class="hs-chip-id">'+esc(h.headset_id.slice(0,12)+'…')+'</div></div><div class="badge '+(ig?'badge-amber':'badge-teal')+'" style="margin-left:auto">'+(ig?'IN-GAME':'ONLINE')+'</div>';chip.addEventListener('click',function(){if(ig){toast('Already in a session.','warn');return;}el('sessHeadset').value=h.headset_id;renderHsChips();checkLaunch();log('Headset: '+(h.model||h.headset_id),'info');});container.appendChild(chip);});}
+function resetSessionForm(){
+  SEL.experience=null;SEL.level=null;SEL.hand=null;SEL.finger=null;SEL.levelMode='preset';SEL.autoMode=false;SEL.customParams={};
+  if(el('sessDoctor'))el('sessDoctor').value='';if(el('sessPatient'))el('sessPatient').value='';if(el('sessNotes'))el('sessNotes').value='';if(el('sessHeadset'))el('sessHeadset').value='';
+  renderSessExpGrid();renderHsChips();if(el('sessConfigCard'))el('sessConfigCard').style.display='none';
+  checkLaunch();
+}
+
+/* ═══ REAL-TIME SESSION UPDATE ════════════════════════════════════════════ */
+function onAnySessionUpdate(row){
+  var sid=row.id;
+  if(row.status==='active'&&SESSION_TIMERS[sid]&&!SESSION_TIMERS[sid].interval){
+    // Session went active — start timer
+    SESSION_TIMERS[sid].startTime=SESSION_TIMERS[sid].startTime||Date.now();
+    SESSION_TIMERS[sid].interval=setInterval(function(){
+      var timerEl=el('mst-'+sid);
+      if(!timerEl){clearInterval(SESSION_TIMERS[sid].interval);return;}
+      var e=Math.floor((Date.now()-SESSION_TIMERS[sid].startTime)/1000);
+      var m=Math.floor(e/60),s=e%60;
+      timerEl.textContent=m+':'+(s<10?'0':'')+s;
+    },1000);
+    log('▶ Active: '+row.patient_name+' ['+sid.slice(0,8)+'…]','ok');
+  }
+  if(row.status==='paused'){log('⏸ Paused: '+row.patient_name,'warn');}
+  if(row.status==='completed'){
+    stopSessionTimer(sid);
+    log('✅ Completed: '+row.patient_name+' ['+sid.slice(0,8)+'…]','ok');
+    toast(row.patient_name+' — session completed!','ok');
+    setTimeout(function(){loadActiveSessions();loadHistory();},1200);
+  }
+  if(row.status==='stopped'||row.status==='failed'){
+    stopSessionTimer(sid);
+    log('⏹ '+cap(row.status)+': '+row.patient_name,'warn');
+    setTimeout(function(){loadActiveSessions();},600);
+  }
+}
+
+function stopSessionTimer(sid){
+  if(SESSION_TIMERS[sid]){
+    if(SESSION_TIMERS[sid].interval)clearInterval(SESSION_TIMERS[sid].interval);
+    delete SESSION_TIMERS[sid];
+  }
+}
+
+/* ═══ MULTI-SESSION PANEL (right side of Launch page) ════════════════════ */
+function renderSessionsActivePanel(){
+  var panel=el('multiSessPanel');if(!panel)return;
+  var badge=el('sessCountBadge'),countVal=el('sessCountVal');
+  var count=DB.activeSessions.length;
+  if(badge){badge.style.display=count>0?'inline-flex':'none';}
+  if(countVal)countVal.textContent=count;
+  if(!count){
+    panel.innerHTML='<div class="empty"><div class="empty-icon">📡</div><div class="empty-msg">No active sessions</div></div>';
+    return;
+  }
+  var html='<div class="multi-sess-panel">';
+  DB.activeSessions.forEach(function(s){
+    var sid=s.id;
+    var exp=DB.experiences.find(function(e){return e.id===s.experience_id||e.name===s.experience_name;});
+    var kpiSchema=exp?parseSchema(exp.kpi_schema):[];
+    var kpiData={};try{kpiData=s.kpi_data&&typeof s.kpi_data==='string'?JSON.parse(s.kpi_data):(s.kpi_data||{});}catch(_){}
+    var handFinger=s.hand?cap(s.hand)+(s.finger?'+'+cap(s.finger):''):'';
+    var levelLabel=s.level===0?'Custom':'L'+s.level;
+    var hsName=(DB.headsets.find(function(h){return h.headset_id===s.headset_id;})||{}).name||s.headset_id||'—';
+    // Timer display — show elapsed if active, or dash
+    var timerHtml='';
+    if(s.status==='active'){
+      var elapsed='';
+      if(SESSION_TIMERS[sid]){
+        var e=Math.floor((Date.now()-SESSION_TIMERS[sid].startTime)/1000);
+        var m=Math.floor(e/60),sc=e%60;
+        elapsed=m+':'+(sc<10?'0':'')+sc;
+      }
+      timerHtml='<span class="ms-timer" id="mst-'+esc(sid)+'">'+elapsed+'</span>';
+    }
+    html+='<div class="multi-sess-card ms-'+esc(s.status)+'" id="msc-'+esc(sid)+'" style="animation:fadein .2s ease">'+
+      '<div class="ms-hdr">'+
+        '<div class="ms-patient">'+esc(s.patient_name||'—')+'</div>'+
+        '<span class="ms-exp">'+esc(s.experience_name||'—')+'</span>'+
+        timerHtml+
+        '<span class="state-pill '+esc(s.status)+'">'+esc(s.status.toUpperCase())+'</span>'+
+      '</div>'+
+      '<div class="ms-meta">'+
+        '<span class="ms-pill ms-level">'+esc(levelLabel)+'</span>'+
+        (handFinger?'<span class="ms-pill ms-hand">'+esc(handFinger)+'</span>':'')+
+        '<span class="ms-pill ms-headset">🥽 '+esc(hsName.length>10?hsName.slice(0,10)+'…':hsName)+'</span>'+
+        '<span class="ms-pill" style="color:var(--t2)">'+esc(s.doctor_name||'—')+'</span>'+
+      '</div>'+
+      (Object.keys(kpiData).length?'<div class="ms-kpi-row">'+renderKpiStrip(kpiData,kpiSchema)+'</div>':'')+
+      '<div class="ms-ctrl">'+
+        (s.status==='paused'?'<button class="ms-ctrl-btn ms-ctrl-play" onclick="remoteCmd(\''+sid+'\',\'active\')">▶ Resume</button>':'')+
+        (s.status==='active'||s.status==='pending'?'<button class="ms-ctrl-btn ms-ctrl-pause" onclick="remoteCmd(\''+sid+'\',\'paused\')">⏸ Pause</button>':'')+
+        '<button class="ms-ctrl-btn ms-ctrl-stop" onclick="remoteStop(\''+sid+'\')">⏹ Stop</button>'+
+      '</div>'+
+    '</div>';
+  });
+  html+='</div>';
+  panel.innerHTML=html;
+  // Re-attach live timers for active sessions
+  DB.activeSessions.forEach(function(s){
+    if(s.status==='active'&&SESSION_TIMERS[s.id]&&!SESSION_TIMERS[s.id].interval){
+      var sid=s.id;
+      SESSION_TIMERS[sid].interval=setInterval(function(){
+        var timerEl=el('mst-'+sid);
+        if(!timerEl){clearInterval(SESSION_TIMERS[sid].interval);SESSION_TIMERS[sid].interval=null;return;}
+        var e=Math.floor((Date.now()-SESSION_TIMERS[sid].startTime)/1000);
+        var m=Math.floor(e/60),sc=e%60;
+        timerEl.textContent=m+':'+(sc<10?'0':'')+sc;
+      },1000);
+    }
+  });
+}
+
+/* ═══ HEADSETS (session launcher side) ═══════════════════════════════════ */
+function loadHeadsets(manual){
+  if(!DB.sb)return Promise.resolve();
+  return DB.sb.from('headsets').select('headset_id,name,model,status,last_seen').order('last_seen',{ascending:false}).then(function(r){
+    if(r.error)return;
+    DB.headsets=r.data||[];
+    var onlineCount=DB.headsets.filter(function(h){
+      var age=Date.now()-new Date(h.last_seen||0).getTime();
+      return age<HS.WINDOW*1000&&h.status!=='offline';
+    }).length;
+    el('badge-headsets').textContent=onlineCount;
+    if(el('statHsOnline'))el('statHsOnline').textContent=onlineCount;
+    renderHsChips();
+    renderHeadsets();
+  });
+}
+function renderHsChips(){
+  var container=el('sessHsChips');if(!container)return;
+  var cur=el('sessHeadset')?el('sessHeadset').value.trim():'';
+  var now=Date.now();
+  var expSelected=!!SEL.experience;
+  var expId=expSelected?SEL.experience.id:null;
+  var onlineHeadsets=DB.headsets.filter(function(h){
+    var age=now-new Date(h.last_seen||0).getTime();
+    return age<HS.WINDOW*1000;
+  });
+  var notice=el('sessHsFilterNotice');
+  var noticeMsg=el('sessHsFilterMsg');
+  if(notice){
+    if(expSelected){notice.style.display='flex';if(noticeMsg)noticeMsg.textContent='Select an online headset — headsets busy with another game are dimmed';}
+    else{notice.style.display='none';}
+  }
+  if(!onlineHeadsets.length){container.innerHTML='<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--t3);font-style:italic">No headsets online</span>';return;}
+  container.innerHTML='';
+  onlineHeadsets.forEach(function(h){
+    var isMe=cur===h.headset_id;
+    var ig=h.status==='in_game';
+    var activeSess=DB.activeSessions.find(function(s){return s.headset_id===h.headset_id;});
+    var busyWithOther=ig&&activeSess&&expId&&activeSess.experience_id!==expId;
+    var chip=document.createElement('div');
+    var cls='hs-chip'+(isMe?' selected':'')+(ig&&!busyWithOther&&!isMe?' in-game':'')+(busyWithOther?' dimmed':'');
+    chip.className=cls;
+    chip.innerHTML=
+      '<div class="hs-chip-dot"></div>'+
+      '<div>'+
+        '<div class="hs-chip-name">'+esc(h.name||h.model||'Headset')+'</div>'+
+        '<div class="hs-chip-id">'+esc(h.headset_id.slice(0,12)+'…')+'</div>'+
+      '</div>'+
+      '<div class="badge '+(ig?'badge-amber':'badge-teal')+'" style="margin-left:auto">'+
+        (ig?'IN-GAME':'ONLINE')+
+      '</div>';
+    if(!busyWithOther){
+      chip.addEventListener('click',function(){
+        if(ig&&!isMe&&activeSess&&activeSess.experience_id!==expId){toast('Headset is busy with another session.','warn');return;}
+        el('sessHeadset').value=h.headset_id;
+        renderHsChips();checkLaunch();
+        log('Headset: '+(h.name||h.model||h.headset_id),'info');
+      });
+    }
+    container.appendChild(chip);
+  });
+}
 function startScanCountdown(){HS.countdown=HS.INTERVAL;HS.lastTick=performance.now();if(HS.rafId)cancelAnimationFrame(HS.rafId);(function tick(now){var dt=(now-HS.lastTick)/1000;HS.lastTick=now;HS.countdown=Math.max(0,HS.countdown-dt);var fill=el('sessScanFill'),lbl=el('sessScanLbl');if(fill)fill.style.width=((HS.countdown/HS.INTERVAL)*100)+'%';if(lbl)lbl.textContent=Math.ceil(HS.countdown)+'s';if(HS.countdown>0)HS.rafId=requestAnimationFrame(tick);})(performance.now());}
 function startHsAutoRefresh(){if(HS.timer)clearInterval(HS.timer);HS.timer=setInterval(function(){loadHeadsets(false);startScanCountdown();},HS.INTERVAL*1000);}
 
-/* ═══ HISTORY — with KPI data column ═════════════════════════════════════ */
+/* ═══ HISTORY ═════════════════════════════════════════════════════════════ */
 var _allHist=[],_histSearch='';
 function loadHistory(){if(!DB.sb)return;DB.sb.from('game_sessions').select('*').order('created_at',{ascending:false}).limit(200).then(function(r){if(r.error){log('History: '+r.error.message,'err');return;}_allHist=r.data||[];filterHistory();});}
 window.filterHistory=function(){_histSearch=(el('histSearch')?el('histSearch').value:'').toLowerCase();var rows=_allHist.filter(function(r){return(r.patient_name+(r.experience_name||'')+(r.headset_id||'')).toLowerCase().indexOf(_histSearch)>-1;});renderHistory(rows);};
-
 function renderHistory(rows){
   var body=el('histBody');
   if(!rows.length){body.innerHTML='<tr><td colspan="12"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No sessions found</div></div></td></tr>';return;}
   body.innerHTML=rows.map(function(r){
-    // Find matching experience for KPI schema
     var exp=DB.experiences.find(function(e){return e.id===r.experience_id||e.name===r.experience_name;});
     var kpiSchema=exp?parseSchema(exp.kpi_schema):[];
-
-    // Parse kpi_data
-    var kpiData={};
-    if(r.kpi_data){
-      try{kpiData=typeof r.kpi_data==='string'?JSON.parse(r.kpi_data):r.kpi_data;}catch(_){}
-    }
-    // Fallback: if no kpi_data but score exists, show it
+    var kpiData={};if(r.kpi_data){try{kpiData=typeof r.kpi_data==='string'?JSON.parse(r.kpi_data):r.kpi_data;}catch(_){}}
     if(!Object.keys(kpiData).length&&r.score!==null&&r.score!==undefined)kpiData.score=r.score;
-
-    var kpiHtml=renderKpiStrip(kpiData,kpiSchema);
-
-    // Hand/finger — show N/A if the experience doesn't require them
-    var handCell=r.hand?cap(r.hand):'<span style="color:var(--t3);font-size:11px">N/A</span>';
-    var fingerCell=r.finger?cap(r.finger):'<span style="color:var(--t3);font-size:11px">N/A</span>';
-
     return'<tr>'+
       '<td style="font-family:\'JetBrains Mono\',monospace;font-size:10px;white-space:nowrap">'+fmtDate(r.created_at)+'</td>'+
       '<td><strong style="color:var(--t0)">'+esc(r.patient_name||'—')+'</strong></td>'+
       '<td style="color:var(--t2);font-size:12px">'+esc(r.doctor_name||r.doctor_id||'—')+'</td>'+
       '<td style="font-weight:600;color:var(--t0)">'+esc(r.experience_name||'—')+'</td>'+
       '<td>'+(r.level===0?'<span class="badge badge-vio">Custom</span>':'<span style="font-family:\'JetBrains Mono\',monospace;color:var(--teal)">L'+r.level+'</span>')+'</td>'+
-      '<td>'+handCell+'</td>'+
-      '<td>'+fingerCell+'</td>'+
+      '<td>'+(r.hand?cap(r.hand):'<span style="color:var(--t3);font-size:11px">N/A</span>')+'</td>'+
+      '<td>'+(r.finger?cap(r.finger):'<span style="color:var(--t3);font-size:11px">N/A</span>')+'</td>'+
       '<td>'+(r.auto_mode?'<span style="color:var(--amber)">Auto</span>':'Manual')+'</td>'+
       '<td>'+statusBadge(r.status)+'</td>'+
-      '<td style="min-width:160px">'+kpiHtml+'</td>'+
+      '<td style="min-width:160px">'+renderKpiStrip(kpiData,kpiSchema)+'</td>'+
       '<td style="font-family:\'JetBrains Mono\',monospace">'+fmtDur(r.duration_seconds)+'</td>'+
       '<td style="color:var(--t2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.notes||'—')+'</td>'+
     '</tr>';
   }).join('');
 }
-
 window.exportCSV=function(){
   if(!_allHist.length){toast('No data.','warn');return;}
   var cols=['created_at','patient_name','doctor_name','experience_name','level','hand','finger','auto_mode','status','score','kpi_data','duration_seconds','notes','headset_id'];
@@ -1144,8 +1330,26 @@ window.exportCSV=function(){
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download='rehabx_'+Date.now()+'.csv';a.click();toast('Exported '+_allHist.length+' rows.','ok');
 };
 
-/* ═══ ACTIVE SESSIONS PAGE ════════════════════════════════════════════════ */
-function loadActiveSessions(){if(!DB.sb)return;DB.sb.from('game_sessions').select('*').in('status',['pending','active','paused']).order('created_at',{ascending:false}).then(function(r){if(r.error)return;DB.activeSessions=r.data||[];el('badge-active').textContent=DB.activeSessions.length;el('statActive').textContent=DB.activeSessions.length;renderActiveSessions();});}
+/* ═══ ACTIVE SESSIONS ═════════════════════════════════════════════════════ */
+function loadActiveSessions(){
+  if(!DB.sb)return;
+  DB.sb.from('game_sessions').select('*').in('status',['pending','active','paused']).order('created_at',{ascending:false}).then(function(r){
+    if(r.error)return;
+    DB.activeSessions=r.data||[];
+    el('badge-active').textContent=DB.activeSessions.length;
+    el('statActive').textContent=DB.activeSessions.length;
+    // Init timers for any active sessions we don't already have
+    DB.activeSessions.forEach(function(s){
+      if(s.status==='active'&&!SESSION_TIMERS[s.id]){
+        SESSION_TIMERS[s.id]={startTime:s.created_at?new Date(s.created_at).getTime():Date.now(),interval:null};
+      }
+    });
+    renderActiveSessions();       // Full page
+    renderSessionsActivePanel();  // Right panel on Launch page
+    renderHsChips();
+  });
+}
+
 function renderActiveSessions(){
   var grid=el('activeGrid');
   if(!DB.activeSessions.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📡</div><div class="empty-msg">No active sessions right now</div></div>';return;}
@@ -1153,9 +1357,12 @@ function renderActiveSessions(){
     var handFinger=s.hand?cap(s.hand)+(s.finger?' / '+cap(s.finger):''):'<span style="color:var(--t3)">No selection</span>';
     return'<div class="live-card"><div class="live-hdr"><div class="live-badge"><span class="live-dot"></span>'+esc(s.status.toUpperCase())+'</div><strong style="color:var(--t0)">'+esc(s.patient_name||'—')+'</strong><span class="state-pill '+s.status+'">'+s.status.toUpperCase()+'</span></div>'+
     '<div class="live-meta-grid">'+lmCell('Experience',esc(s.experience_name||'—'))+lmCell('Level',s.level===0?'<span style="color:var(--vio)">Custom</span>':'L'+s.level)+lmCell('Hand/Finger',handFinger)+lmCell('Doctor',esc(s.doctor_name||'—'))+'</div>'+
-    '<div class="ctrl-row">'+(s.status!=='active'?'<button class="ctrl-btn ctrl-play" onclick="remoteCmd(\''+s.id+'\',\'active\')">▶ Resume</button>':'')+( s.status!=='paused'?'<button class="ctrl-btn ctrl-pause" onclick="remoteCmd(\''+s.id+'\',\'paused\')">⏸ Pause</button>':'')+'<button class="ctrl-btn ctrl-stop" onclick="remoteStop(\''+s.id+'\')">⏹ Stop</button></div></div>';
+    '<div class="ctrl-row">'+(s.status!=='active'?'<button class="ctrl-btn ctrl-play" onclick="remoteCmd(\''+s.id+'\',\'active\')">▶ Resume</button>':'')+(s.status!=='paused'?'<button class="ctrl-btn ctrl-pause" onclick="remoteCmd(\''+s.id+'\',\'paused\')">⏸ Pause</button>':'')+'<button class="ctrl-btn ctrl-stop" onclick="remoteStop(\''+s.id+'\')">⏹ Stop</button></div></div>';
   }).join('');
 }
+
+function lmCell(label,val){return'<div class="lm-cell"><div class="lm-label">'+label+'</div><div class="lm-val">'+val+'</div></div>';}
+
 window.remoteCmd=function(id,status){if(!DB.sb)return;DB.sb.from('game_sessions').update({status:status}).eq('id',id).then(function(r){if(r.error){toast(r.error.message,'err');return;}toast('Sent: '+status,'ok');loadActiveSessions();});};
 window.remoteStop=function(id){if(!confirm('Stop this session?'))return;remoteCmd(id,'stopped');};
 
@@ -1172,13 +1379,21 @@ function loadDashboard(){
       var kpiSchema=exp?parseSchema(exp.kpi_schema):[];
       var kpiData={};try{kpiData=s.kpi_data&&typeof s.kpi_data==='string'?JSON.parse(s.kpi_data):(s.kpi_data||{});}catch(_){}
       if(!Object.keys(kpiData).length&&s.score!=null)kpiData.score=s.score;
-      return'<tr><td style="font-weight:600;color:var(--t0)">'+esc(s.patient_name||'—')+'</td><td>'+esc(s.experience_name||'—')+'</td><td>'+( s.hand?cap(s.hand):'<span style="color:var(--t3)">—</span>')+'</td><td>'+statusBadge(s.status)+'</td><td>'+renderKpiStrip(kpiData,kpiSchema)+'</td><td style="font-family:\'JetBrains Mono\',monospace">'+fmtDur(s.duration_seconds)+'</td></tr>';
+      return'<tr><td style="font-weight:600;color:var(--t0)">'+esc(s.patient_name||'—')+'</td><td>'+esc(s.experience_name||'—')+'</td><td>'+(s.hand?cap(s.hand):'<span style="color:var(--t3)">—</span>')+'</td><td>'+statusBadge(s.status)+'</td><td>'+renderKpiStrip(kpiData,kpiSchema)+'</td><td style="font-family:\'JetBrains Mono\',monospace">'+fmtDur(s.duration_seconds)+'</td></tr>';
     }).join('')+'</tbody></table></div>';
   });
 }
-function updateDashStats(){if(el('statDoctors'))el('statDoctors').textContent=DB.doctors.length||'—';if(el('statPatients'))el('statPatients').textContent=DB.patients.length||'—';if(el('statActive'))el('statActive').textContent=DB.activeSessions.length||'0';if(el('statExp'))el('statExp').textContent=DB.experiences.length||'—';}
+function updateDashStats(){
+  if(el('statDoctors'))el('statDoctors').textContent=DB.doctors.length||'—';
+  if(el('statPatients'))el('statPatients').textContent=DB.patients.length||'—';
+  if(el('statActive'))el('statActive').textContent=DB.activeSessions.length||'0';
+  if(el('statExp'))el('statExp').textContent=DB.experiences.length||'—';
+  var onlineCount=DB.headsets.filter(function(h){var age=Date.now()-new Date(h.last_seen||0).getTime();return age<HS.WINDOW*1000&&h.status!=='offline';}).length;
+  if(el('statHsOnline'))el('statHsOnline').textContent=onlineCount;
+  el('badge-headsets').textContent=onlineCount;
+}
 
-log('RehabX v4.0 — KPI-driven, dynamic hand/finger, schema-synced.','ok');
+log('RehabX v4.2 — Multi-session launch, live panel with per-session timers.','ok');
 </script>
 </body>
 </html>
