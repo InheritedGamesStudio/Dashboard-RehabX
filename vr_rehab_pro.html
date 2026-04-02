@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+<-- chaima -->
+
+
+  <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -611,7 +614,8 @@ select.schema-input{padding:7px 28px 7px 9px;font-size:12px;}
 
 <script>
 'use strict';
-
+var ACTIVE_POLL_TIMER = null;
+var ACTIVE_POLL_INTERVAL = 4000; // 4 seconds
 var DB={sb:null,rch:null,doctors:[],patients:[],experiences:[],history:[],activeSessions:[],headsets:[],logRows:[]};
 var SEL={experience:null,levelMode:'preset',level:null,hand:null,finger:null,autoMode:false,customParams:{}};
 // Per-session timers: { [sessionId]: { startTime, interval } }
@@ -637,30 +641,133 @@ var KPI_PRESETS={
   ]
 };
 
-function fmtKpiVal(val,type,unit){
-  if(val===undefined||val===null)return'—';
-  if(type==='duration'){var m=Math.floor(val/60),s=Math.floor(val%60);return m>0?m+'m '+(s<10?'0':'')+s+'s':s+'s';}
-  if(type==='percentage')return parseFloat(val).toFixed(1)+'%';
-  if(type==='angle')return parseFloat(val).toFixed(1)+'°';
-  if(type==='float')return parseFloat(val).toFixed(2)+(unit?' '+unit:'');
-  return val+(unit?' '+unit:'');
+function fmtKpiVal(val, type, unit) {
+  if (val === undefined || val === null) return '—';
+  
+  // Handle Json type or raw objects/arrays
+  if (type === 'json' || type === 'Json' || typeof val === 'object') {
+    return null; // signal to renderKpiStrip to use special rendering
+  }
+  
+  if (type === 'duration') {
+    var m = Math.floor(val / 60), s = Math.floor(val % 60);
+    return m > 0 ? m + 'm ' + (s < 10 ? '0' : '') + s + 's' : s + 's';
+  }
+  if (type === 'percentage') return parseFloat(val).toFixed(1) + '%';
+  if (type === 'angle') return parseFloat(val).toFixed(1) + '°';
+  if (type === 'float') return parseFloat(val).toFixed(2) + (unit ? ' ' + unit : '');
+  return val + (unit ? ' ' + unit : '');
 }
 
-function renderKpiStrip(kpiData,kpiSchema){
-  if(!kpiData||!Object.keys(kpiData).length)return'<span style="color:var(--t3);font-size:11px">—</span>';
-  var schema=kpiSchema||[];
-  var html='<div class="kpi-strip">';
-  Object.keys(kpiData).forEach(function(key){
-    var ks=schema.find(function(s){return s.key===key;})||{label:key,type:'int',unit:''};
-    var val=kpiData[key];
-    html+='<div class="kpi-pill kpi-'+ks.type+'">';
-    html+='<span class="kpi-pill-label">'+esc(ks.label)+'</span>';
-    html+='<span class="kpi-pill-val">'+esc(String(fmtKpiVal(val,ks.type,ks.unit)))+'</span>';
-    if(ks.unit&&ks.type!=='percentage'&&ks.type!=='angle'&&ks.type!=='duration')html+='<span class="kpi-pill-unit">'+esc(ks.unit)+'</span>';
-    html+='</div>';
+function renderKpiStrip(kpiData, kpiSchema) {
+  if (!kpiData || !Object.keys(kpiData).length) 
+    return '<span style="color:var(--t3);font-size:11px">—</span>';
+  
+  var schema = kpiSchema || [];
+  var html = '<div class="kpi-strip">';
+  
+  Object.keys(kpiData).forEach(function(key) {
+    var ks = schema.find(function(s) { return s.key === key; }) 
+              || { label: key, type: 'int', unit: '' };
+    var val = kpiData[key];
+    var isJson = ks.type === 'json' || ks.type === 'Json' 
+                 || (typeof val === 'object' && val !== null);
+
+    if (isJson) {
+      // Render a collapsible JSON pill
+      var arr = Array.isArray(val) ? val : [val];
+      var count = arr.length;
+      var safeId = 'kpi_' + key + '_' + Math.random().toString(36).slice(2);
+      
+      html += '<div class="kpi-pill" style="flex-direction:column;align-items:flex-start;'
+            + 'border-color:var(--vio-m);max-width:100%;width:100%">';
+      html += '<div style="display:flex;align-items:center;gap:8px;width:100%">';
+      html += '<span class="kpi-pill-label">' + esc(ks.label) + '</span>';
+      html += '<span class="kpi-pill-val" style="color:var(--vio)">' + count + '</span>';
+      html += '<span class="kpi-pill-unit">entries</span>';
+      html += '<button onclick="toggleKpiJson(\'' + safeId + '\')" '
+            + 'style="margin-left:auto;background:var(--vio-d);border:1px solid var(--vio-m);'
+            + 'color:var(--vio);border-radius:4px;padding:1px 7px;font-size:9px;'
+            + 'font-family:\'JetBrains Mono\',monospace;cursor:pointer;letter-spacing:1px">'
+            + 'EXPAND</button>';
+      html += '</div>';
+      
+      // Collapsed table view
+      html += '<div id="' + safeId + '" style="display:none;width:100%;margin-top:8px;'
+            + 'overflow-x:auto">';
+      
+      if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object') {
+        // Render as a mini table
+        var cols = Object.keys(val[0]);
+        html += '<table style="width:100%;border-collapse:collapse;font-family:'
+              + '\'JetBrains Mono\',monospace;font-size:10px">';
+        html += '<thead><tr>';
+        cols.forEach(function(c) {
+          html += '<th style="padding:4px 8px;background:var(--bg4);color:var(--t2);'
+                + 'text-align:left;border:1px solid var(--b1);white-space:nowrap">'
+                + esc(c) + '</th>';
+        });
+        html += '</tr></thead><tbody>';
+        val.forEach(function(row, ri) {
+          var rowColor = ri % 2 === 0 ? 'var(--bg3)' : 'var(--bg4)';
+          html += '<tr style="background:' + rowColor + '">';
+          cols.forEach(function(c) {
+            var cellVal = row[c];
+            // Colour-code by typeTouche
+            var color = 'var(--t1)';
+            if (c === 'typeTouche') {
+              if (cellVal === 'Vert')         color = 'var(--teal)';
+              else if (cellVal === 'Rouge')   color = 'var(--rose)';
+              else if (cellVal === 'Orange')  color = 'var(--amber)';
+              else if (cellVal === 'MauvaiseMain') color = 'var(--vio)';
+            }
+            if (c === 'scoreReussite') color = 'var(--sky)';
+            if (c === 'vitesse')       color = 'var(--lime)';
+            html += '<td style="padding:3px 8px;border:1px solid var(--b0);'
+                  + 'color:' + color + ';white-space:nowrap">'
+                  + esc(String(cellVal !== null && cellVal !== undefined ? cellVal : '—'))
+                  + '</td>';
+          });
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+      } else {
+        // Fallback: pretty-printed JSON
+        html += '<pre style="color:var(--t1);font-size:10px;white-space:pre-wrap;'
+              + 'word-break:break-all;margin:0;padding:6px;background:var(--bg4);'
+              + 'border-radius:4px;border:1px solid var(--b1)">'
+              + esc(JSON.stringify(val, null, 2)) + '</pre>';
+      }
+      
+      html += '</div></div>'; // close expanded + kpi-pill
+    } else {
+      // Normal scalar pill
+      var formatted = fmtKpiVal(val, ks.type, ks.unit);
+      html += '<div class="kpi-pill kpi-' + ks.type + '">';
+      html += '<span class="kpi-pill-label">' + esc(ks.label) + '</span>';
+      html += '<span class="kpi-pill-val">' + esc(String(formatted)) + '</span>';
+      if (ks.unit && ks.type !== 'percentage' && ks.type !== 'angle' && ks.type !== 'duration')
+        html += '<span class="kpi-pill-unit">' + esc(ks.unit) + '</span>';
+      html += '</div>';
+    }
   });
-  return html+'</div>';
+  
+  return html + '</div>';
 }
+
+window.toggleKpiJson = function(id) {
+  var el2 = document.getElementById(id);
+  if (!el2) return;
+  var btn = el2.previousElementSibling && 
+            el2.previousElementSibling.querySelector('button');
+  if (el2.style.display === 'none') {
+    el2.style.display = 'block';
+    if (btn) btn.textContent = 'COLLAPSE';
+  } else {
+    el2.style.display = 'none';
+    if (btn) btn.textContent = 'EXPAND';
+  }
+};
 
 var SCHEMA_PRESETS={
   fruitSlicer:[
@@ -1091,7 +1198,23 @@ function checkLaunch(){
   var ok=DB.sb&&el('sessDoctor')&&el('sessDoctor').value&&el('sessPatient')&&el('sessPatient').value&&exp&&levelOk&&handOk&&fingerOk&&el('sessHeadset')&&el('sessHeadset').value.trim();
   if(el('launchBtn'))el('launchBtn').disabled=!ok;
 }
+function startActiveSessionsPolling() {
+  if (ACTIVE_POLL_TIMER) return; // already running
+  ACTIVE_POLL_TIMER = setInterval(function() {
+    loadActiveSessions();
+    // Auto-stop when nothing left
+    if (DB.activeSessions.length === 0) stopActiveSessionsPolling();
+  }, ACTIVE_POLL_INTERVAL);
+  log('Active session polling started.', 'info');
+}
 
+function stopActiveSessionsPolling() {
+  if (ACTIVE_POLL_TIMER) {
+    clearInterval(ACTIVE_POLL_TIMER);
+    ACTIVE_POLL_TIMER = null;
+    log('Active session polling stopped.', 'info');
+  }
+}
 /* ═══ LAUNCH SESSION (multi) ══════════════════════════════════════════════ */
 window.launchSession=function(){
   if(!DB.sb)return;
@@ -1141,17 +1264,18 @@ function onAnySessionUpdate(row){
     log('▶ Active: '+row.patient_name+' ['+sid.slice(0,8)+'…]','ok');
   }
   if(row.status==='paused'){log('⏸ Paused: '+row.patient_name,'warn');}
-  if(row.status==='completed'){
-    stopSessionTimer(sid);
-    log('✅ Completed: '+row.patient_name+' ['+sid.slice(0,8)+'…]','ok');
-    toast(row.patient_name+' — session completed!','ok');
-    setTimeout(function(){loadActiveSessions();loadHistory();},1200);
-  }
-  if(row.status==='stopped'||row.status==='failed'){
-    stopSessionTimer(sid);
-    log('⏹ '+cap(row.status)+': '+row.patient_name,'warn');
-    setTimeout(function(){loadActiveSessions();},600);
-  }
+if(row.status==='completed'){
+  stopSessionTimer(sid);
+  log('✅ Completed: '+row.patient_name+' ['+sid.slice(0,8)+'…]','ok');
+  toast(row.patient_name+' — session completed!','ok');
+  loadActiveSessions(); // ✅ immediate refresh
+  loadHistory();
+}
+if(row.status==='stopped'||row.status==='failed'){
+  stopSessionTimer(sid);
+  log('⏹ '+cap(row.status)+': '+row.patient_name,'warn');
+  loadActiveSessions(); // ✅ immediate refresh
+}
 }
 
 function stopSessionTimer(sid){
@@ -1330,7 +1454,6 @@ window.exportCSV=function(){
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download='rehabx_'+Date.now()+'.csv';a.click();toast('Exported '+_allHist.length+' rows.','ok');
 };
 
-/* ═══ ACTIVE SESSIONS ═════════════════════════════════════════════════════ */
 function loadActiveSessions(){
   if(!DB.sb)return;
   DB.sb.from('game_sessions').select('*').in('status',['pending','active','paused']).order('created_at',{ascending:false}).then(function(r){
@@ -1338,18 +1461,19 @@ function loadActiveSessions(){
     DB.activeSessions=r.data||[];
     el('badge-active').textContent=DB.activeSessions.length;
     el('statActive').textContent=DB.activeSessions.length;
-    // Init timers for any active sessions we don't already have
     DB.activeSessions.forEach(function(s){
       if(s.status==='active'&&!SESSION_TIMERS[s.id]){
         SESSION_TIMERS[s.id]={startTime:s.created_at?new Date(s.created_at).getTime():Date.now(),interval:null};
       }
     });
-    renderActiveSessions();       // Full page
-    renderSessionsActivePanel();  // Right panel on Launch page
+    renderActiveSessions();
+    renderSessionsActivePanel();
     renderHsChips();
+    // ✅ Auto-manage polling
+    if(DB.activeSessions.length > 0) startActiveSessionsPolling();
+    else stopActiveSessionsPolling();
   });
 }
-
 function renderActiveSessions(){
   var grid=el('activeGrid');
   if(!DB.activeSessions.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📡</div><div class="empty-msg">No active sessions right now</div></div>';return;}
